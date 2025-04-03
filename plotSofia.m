@@ -13,7 +13,8 @@ for i=1:10:l
     %format long
     %ma-mi
     view(0,90)
-    zlim([-80 120])
+    %clim([-80 120])        % HH
+    clim([-80 50])          % TT
     title([num2str((i-1)*dt)])
     pause(0.000001)
 end

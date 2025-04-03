@@ -2,10 +2,12 @@ clear all
 close all
 
 % condizioni iniziali
-U_rest = -54.387;
+% U_rest = -54.387;                 %  HH
+U_rest = -85.23;                    %  TT
 
-Tf=30*10;
-nt=5000*10;
+%Tf=30*10;      %  HH
+Tf=500;         %  TT
+nt=5000;
 dt=Tf/nt;
 T=linspace(0,Tf,nt+1);
 
@@ -30,7 +32,8 @@ V=zeros(nex+1,ney+1,nt+1);
 
 V(:,:,1)=U_rest;
 
-ionicModel=HodgkinHuxley(V,dt);
+%ionicModel=HodgkinHuxley(V,dt);
+ionicModel=TenTusscher(V,dt);
 
 Iapp=zeros(size(V(:,:,1)));
 which=find(X<0.2 & Y<0.2);
@@ -62,10 +65,11 @@ for i=2:nt+1
     y=H'\rhs;
     Vn=H\y;
 
-    if (i==3334)
-        which=find(Y<0.5 | X<0.5);
-        Vn(which)=U_rest;
-    end
+    % PROTOCOL FOR SPIRAL WAVES
+    % if (i==3334)
+    %     which=find(Y<0.5 | X<0.5);
+    %     Vn(which)=U_rest;
+    % end
 
     V(:,:,i)=reshape(Vn,[nex+1 ney+1]);
 
