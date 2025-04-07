@@ -1,4 +1,11 @@
-function [M,L]=assembleMatrices3D(hx,hy,hz)
+function [M,L]=assembleMatrices3D(pg)
+
+hx=pg.get_h(1);
+hy=pg.get_h(2);
+hz=pg.get_h(3);
+hx=hx(:);
+hy=hy(:);
+hz=hz(:);
 
 hxz=[hx;0];
 zhx=[0;hx];
