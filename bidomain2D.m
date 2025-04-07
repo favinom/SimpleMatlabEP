@@ -11,8 +11,8 @@ U_rest = -85.23;                    %  TT
 
 
 
-Tf=30;           %  HH
-%Tf=500;           %  TT
+%Tf=30;           %  HH
+Tf=500;           %  TT
 nt=5000;
 dt=Tf/nt;
 T=linspace(0,Tf,nt+1);

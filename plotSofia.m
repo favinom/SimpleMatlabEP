@@ -16,6 +16,6 @@ for i=1:10:l
     %clim([-80 120])        % HH
     clim([-80 50])          % TT
     title([num2str((i-1)*dt)])
-    pause(0.000001)
+    pause(0.01)
 end
 

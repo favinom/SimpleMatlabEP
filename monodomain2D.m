@@ -2,8 +2,8 @@ clear all
 close all
 
 % condizioni iniziali
-U_rest = -54.387;                 %  HH
-%U_rest = -85.23;                    %  TT
+% U_rest = -54.387;                 %  HH
+U_rest = -85.23;                    %  TT
 
 %Tf=30;           %  HH
 Tf=500;         %  TT
@@ -32,8 +32,8 @@ V=zeros(nex+1,ney+1,nt+1);
 
 V(:,:,1)=U_rest;
 
-ionicModel=HodgkinHuxley(V,dt);
-%ionicModel=TenTusscher(V,dt);
+%ionicModel=HodgkinHuxley(V,dt);
+ionicModel=TenTusscher(V,dt);
 
 Iapp=zeros(size(V(:,:,1)));
 which=find(X<0.2 & Y<0.2);
