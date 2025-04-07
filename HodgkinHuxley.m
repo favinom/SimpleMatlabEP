@@ -67,27 +67,27 @@ classdef HodgkinHuxley < handle
             obj.N=zeros(size(V));
 
             % supponiamo sia 2D
-            obj.M(:,:,1)=obj.m0;
-            obj.H(:,:,1)=obj.h0;
-            obj.N(:,:,1)=obj.n0;
+            obj.M(:,1)=obj.m0;
+            obj.H(:,1)=obj.h0;
+            obj.N(:,1)=obj.n0;
             % dt
             obj.dt=dt;
 
         end
         function solveTimestep(obj,Vold,i)
-            mold=obj.M(:,:,i-1);
-            hold=obj.H(:,:,i-1);
-            nold=obj.N(:,:,i-1);
+            mold=obj.M(:,i-1);
+            hold=obj.H(:,i-1);
+            nold=obj.N(:,i-1);
             rhs1eval=obj.rhs1(mold,Vold);
             rhs2eval=obj.rhs2(hold,Vold);
             rhs3eval=obj.rhs3(nold,Vold);
-            obj.M(:,:,i)=mold+obj.dt*rhs1eval;
-            obj.H(:,:,i)=hold+obj.dt*rhs2eval;
-            obj.N(:,:,i)=nold+obj.dt*rhs3eval;
+            obj.M(:,i)=mold+obj.dt*rhs1eval;
+            obj.H(:,i)=hold+obj.dt*rhs2eval;
+            obj.N(:,i)=nold+obj.dt*rhs3eval;
         end
         function Iion=evaluateCurr(obj,Vold,i)
-                I_Na_eval=obj.I_Na(Vold,obj.M(:,:,i),obj.H(:,:,i));
-                I_K_eval=obj.I_K(Vold,obj.N(:,:,i));
+                I_Na_eval=obj.I_Na(Vold,obj.M(:,i),obj.H(:,i));
+                I_K_eval=obj.I_K(Vold,obj.N(:,i));
                 I_L_eval=obj.I_L(Vold);
                 Iion=I_Na_eval+I_K_eval+I_L_eval;
         end
