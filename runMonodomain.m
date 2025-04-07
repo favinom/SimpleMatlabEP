@@ -2,7 +2,7 @@ clear all
 close all
 
 dim=2;
-ionicModelType=1; % 1 HH % 2 TT
+ionicModelType=2; % 1 HH % 2 TT
 factorize=0;
 
 if ionicModelType==1
@@ -13,7 +13,7 @@ end
 if ionicModelType==2
     U_rest = -85.23; 
     Tf=500;
-    nt=0; % set the correct value
+    nt=5000; % set the correct value
 end
 T=linspace(0,Tf,nt+1);
 

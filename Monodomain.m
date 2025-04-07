@@ -53,6 +53,8 @@ classdef Monodomain < handle
             obj.ionicModelType=ionicModelType;
             if ionicModelType==1
                 obj.ionicModel=HodgkinHuxley(obj.V,obj.dt);
+            elseif ionicModelType==2
+                obj.ionicModel=TenTusscher(obj.V,obj.dt);
             end
             obj.exportStep=1;
         end
