@@ -2,7 +2,7 @@ clear all
 close all
 
 Xf=1;
-nex=1024;
+nex=512;
 x=linspace(0,Xf,nex+1)';
 hx=diff(x);
 
@@ -13,7 +13,7 @@ hy=diff(y);
 
 [X,Y]=ndgrid(x,y);
 
-[M,L]=assembleMatrices(hx,hy);
+[M,L]=assembleMatrices_old(hx,hy);
 L=L+0.0001*M; 
 
 node_id = 1:(nex+1)*(ney+1);
