@@ -407,24 +407,24 @@ classdef TenTusscher < handle
             obj.S=zeros(size(V));
 
             % supponiamo sia 2D
-            obj.D(:,:,1)=obj.d0;
-            obj.F2(:,:,1)=obj.f20;
-            obj.FCASS(:,:,1)=obj.fCass0;
-            obj.PF(:,:,1)=obj.pf0;
-            obj.CASR(:,:,1)=obj.Ca_sr0;
-            obj.CAI(:,:,1)=obj.Ca_i0;
-            obj.CASS(:,:,1)=obj.Ca_ss0;
-            obj.REL(:,:,1)=obj.Rel0;
-            obj.H(:,:,1)=obj.h0;
-            obj.J(:,:,1)=obj.j0;
-            obj.M(:,:,1)=obj.m0;
-            obj.KI(:,:,1)=obj.K_i0;
-            obj.XR1(:,:,1)=obj.xr10;
-            obj.XR2(:,:,1)=obj.xr20;
-            obj.XS(:,:,1)=obj.xs0;
-            obj.NAI(:,:,1)=obj.Na_i0;
-            obj.PR(:,:,1)=obj.pr0;
-            obj.S(:,:,1)=obj.s0;
+            obj.D(:,1)=obj.d0;
+            obj.F2(:,1)=obj.f20;
+            obj.FCASS(:,1)=obj.fCass0;
+            obj.PF(:,1)=obj.pf0;
+            obj.CASR(:,1)=obj.Ca_sr0;
+            obj.CAI(:,1)=obj.Ca_i0;
+            obj.CASS(:,1)=obj.Ca_ss0;
+            obj.REL(:,1)=obj.Rel0;
+            obj.H(:,1)=obj.h0;
+            obj.J(:,1)=obj.j0;
+            obj.M(:,1)=obj.m0;
+            obj.KI(:,1)=obj.K_i0;
+            obj.XR1(:,1)=obj.xr10;
+            obj.XR2(:,1)=obj.xr20;
+            obj.XS(:,1)=obj.xs0;
+            obj.NAI(:,1)=obj.Na_i0;
+            obj.PR(:,1)=obj.pr0;
+            obj.S(:,1)=obj.s0;
             % dt
             obj.dt=dt;
 
@@ -432,104 +432,104 @@ classdef TenTusscher < handle
 
 
         function Iion=solveTimestep(obj,Vold,i)
-            dold=obj.D(:,:,i-1);
-            f2old=obj.F2(:,:,i-1);
-            fCassold=obj.FCASS(:,:,i-1);
-            pfold=obj.PF(:,:,i-1);
-            Ca_srold=obj.CASR(:,:,i-1);
-            Ca_iold=obj.CAI(:,:,i-1);
-            Ca_ssold=obj.CASS(:,:,i-1);
-            Relold=obj.REL(:,:,i-1);
-            hold=obj.H(:,:,i-1);
-            jold=obj.J(:,:,i-1);
-            mold=obj.M(:,:,i-1);
-            K_iold=obj.KI(:,:,i-1);
-            xr1old=obj.XR1(:,:,i-1);
-            xr2old=obj.XR2(:,:,i-1);
-            xsold=obj.XS(:,:,i-1);
-            Na_iold=obj.NAI(:,:,i-1);
-            prold=obj.PR(:,:,i-1);
-            sold=obj.S(:,:,i-1);
+            dold=obj.D(:,i-1);
+            f2old=obj.F2(:,i-1);
+            fCassold=obj.FCASS(:,i-1);
+            pfold=obj.PF(:,i-1);
+            Ca_srold=obj.CASR(:,i-1);
+            Ca_iold=obj.CAI(:,i-1);
+            Ca_ssold=obj.CASS(:,i-1);
+            Relold=obj.REL(:,i-1);
+            hold=obj.H(:,i-1);
+            jold=obj.J(:,i-1);
+            mold=obj.M(:,i-1);
+            K_iold=obj.KI(:,i-1);
+            xr1old=obj.XR1(:,i-1);
+            xr2old=obj.XR2(:,i-1);
+            xsold=obj.XS(:,i-1);
+            Na_iold=obj.NAI(:,i-1);
+            prold=obj.PR(:,i-1);
+            sold=obj.S(:,i-1);
 
             d_inf_eval = obj.d_inf(Vold);
             tau_d_eval = obj.tau_d(Vold);
-            obj.D(:,:,i)=d_inf_eval+(dold-d_inf_eval).*exp(-obj.dt./tau_d_eval);
+            obj.D(:,i)=d_inf_eval+(dold-d_inf_eval).*exp(-obj.dt./tau_d_eval);
         
             f2_inf_eval = obj.f2_inf(Vold);
             tau_f2_eval = obj.tau_f2(Vold);
-            obj.F2(:,:,i)=f2_inf_eval+(f2old-f2_inf_eval).*exp(-obj.dt./tau_f2_eval);
+            obj.F2(:,i)=f2_inf_eval+(f2old-f2_inf_eval).*exp(-obj.dt./tau_f2_eval);
         
             fCass_inf_eval = obj.fCass_inf(Vold,Ca_ssold);
             tau_fCass_eval = obj.tau_fCass(Vold,Ca_ssold);
-            obj.FCASS(:,:,i)=fCass_inf_eval+(fCassold-fCass_inf_eval).*exp(-obj.dt./tau_fCass_eval);
+            obj.FCASS(:,i)=fCass_inf_eval+(fCassold-fCass_inf_eval).*exp(-obj.dt./tau_fCass_eval);
             
             f_inf_eval = obj.f_inf(Vold);
             tau_f_eval = obj.tau_f(Vold);
-            obj.PF(:,:,i)=f_inf_eval+(pfold-f_inf_eval).*exp(-obj.dt./tau_f_eval);
+            obj.PF(:,i)=f_inf_eval+(pfold-f_inf_eval).*exp(-obj.dt./tau_f_eval);
         
             dRel_eval = obj.dRel(Ca_ssold, Relold, Ca_srold);
-            obj.REL(:,:,i)=Relold+obj.dt.*dRel_eval;
+            obj.REL(:,i)=Relold+obj.dt.*dRel_eval;
         
             dCa_i_eval = obj.dCa_i(Na_iold, Ca_ssold, Ca_srold, Ca_iold, Vold);
-            obj.CAI(:,:,i)=Ca_iold+obj.dt.*dCa_i_eval;
+            obj.CAI(:,i)=Ca_iold+obj.dt.*dCa_i_eval;
         
             dCa_sr_eval = obj.dCa_sr(Relold, Ca_srold, Ca_iold, Ca_ssold);
-            obj.CASR(:,:,i)=Ca_srold+obj.dt.*dCa_sr_eval;
+            obj.CASR(:,i)=Ca_srold+obj.dt.*dCa_sr_eval;
         
             dCa_ss_eval=obj.dCa_ss(Relold,Vold,dold,pfold,f2old,fCassold,Ca_ssold,Ca_srold,Ca_iold);
-            obj.CASS(:,:,i)=Ca_ssold+obj.dt.*dCa_ss_eval;
+            obj.CASS(:,i)=Ca_ssold+obj.dt.*dCa_ss_eval;
         
             h_inf_eval=obj.h_inf(Vold);
             tau_h_eval=obj.tau_h(Vold);
-            obj.H(:,:,i)=h_inf_eval+(hold-h_inf_eval).*exp(-obj.dt./tau_h_eval);
+            obj.H(:,i)=h_inf_eval+(hold-h_inf_eval).*exp(-obj.dt./tau_h_eval);
         
             j_inf_eval=obj.j_inf(Vold);
             tau_j_eval=obj.tau_j(Vold);
-            obj.J(:,:,i)=j_inf_eval+(jold-j_inf_eval).*exp(-obj.dt./tau_j_eval);
+            obj.J(:,i)=j_inf_eval+(jold-j_inf_eval).*exp(-obj.dt./tau_j_eval);
         
             m_inf_eval=obj.m_inf(Vold);
             tau_m_eval=obj.tau_m(Vold);
-            obj.M(:,:,i)=m_inf_eval+(mold-m_inf_eval).*exp(-obj.dt./tau_m_eval);
+            obj.M(:,i)=m_inf_eval+(mold-m_inf_eval).*exp(-obj.dt./tau_m_eval);
         
             xr1_inf_eval=obj.xr1_inf(Vold);
             tau_xr1_eval=obj.tau_xr1(Vold);
-            obj.XR1(:,:,i)=xr1_inf_eval+(xr1old-xr1_inf_eval).*exp(-obj.dt./tau_xr1_eval);
+            obj.XR1(:,i)=xr1_inf_eval+(xr1old-xr1_inf_eval).*exp(-obj.dt./tau_xr1_eval);
         
             xr2_inf_eval=obj.xr2_inf(Vold);
             tau_xr2_eval=obj.tau_xr2(Vold);
-            obj.XR2(:,:,i)=xr2_inf_eval+(xr2old-xr2_inf_eval).*exp(-obj.dt./tau_xr2_eval);
+            obj.XR2(:,i)=xr2_inf_eval+(xr2old-xr2_inf_eval).*exp(-obj.dt./tau_xr2_eval);
         
             xs_inf_eval=obj.xs_inf(Vold);
             tau_xs_eval=obj.tau_xs(Vold);
-            obj.XS(:,:,i)=xs_inf_eval+(xsold-xs_inf_eval).*exp(-obj.dt./tau_xs_eval);
+            obj.XS(:,i)=xs_inf_eval+(xsold-xs_inf_eval).*exp(-obj.dt./tau_xs_eval);
         
             r_inf_eval=obj.r_inf(Vold);
             tau_r_eval=obj.tau_r(Vold);
-            obj.PR(:,:,i)=r_inf_eval+(prold-r_inf_eval).*exp(-obj.dt./tau_r_eval);
+            obj.PR(:,i)=r_inf_eval+(prold-r_inf_eval).*exp(-obj.dt./tau_r_eval);
         
             s_inf_eval=obj.s_inf(Vold);
             tau_s_eval=obj.tau_s(Vold);
-            obj.S(:,:,i)=s_inf_eval+(sold-s_inf_eval).*exp(-obj.dt./tau_s_eval);
+            obj.S(:,i)=s_inf_eval+(sold-s_inf_eval).*exp(-obj.dt./tau_s_eval);
 
 
             i_K1_eval=obj.i_K1(Vold,K_iold);
-            i_to_eval=obj.i_to(Vold, obj.PR(:,:,i), obj.S(:,:,i),K_iold);
-            i_Kr_eval=obj.i_Kr(Vold,obj.XR1(:,:,i), obj.XR2(:,:,i),K_iold);
-            i_Ks_eval=obj.i_Ks(Vold, Na_iold, obj.XS(:,:,i),K_iold);
-            i_CaL_eval=obj.i_CaL(Vold,obj.D(:,:,i),obj.PF(:,:,i),obj.F2(:,:,i),obj.FCASS(:,:,i),obj.CASS(:,:,i));
+            i_to_eval=obj.i_to(Vold, obj.PR(:,i), obj.S(:,i),K_iold);
+            i_Kr_eval=obj.i_Kr(Vold,obj.XR1(:,i), obj.XR2(:,i),K_iold);
+            i_Ks_eval=obj.i_Ks(Vold, Na_iold, obj.XS(:,i),K_iold);
+            i_CaL_eval=obj.i_CaL(Vold,obj.D(:,i),obj.PF(:,i),obj.F2(:,i),obj.FCASS(:,i),obj.CASS(:,i));
             i_NaK_eval=obj.i_NaK(Vold,Na_iold);
-            i_Na_eval=obj.i_Na(Vold,obj.M(:,:,i),obj.H(:,:,i),obj.J(:,:,i),Na_iold);
+            i_Na_eval=obj.i_Na(Vold,obj.M(:,i),obj.H(:,i),obj.J(:,i),Na_iold);
             i_b_Na_eval=obj.i_b_Na(Vold,Na_iold);
-            i_NaCa_eval=obj.i_NaCa(Vold,Na_iold,obj.CAI(:,:,i));
-            i_b_Ca_eval=obj.i_b_Ca(Vold,obj.CAI(:,:,i));
-            i_p_Ca_eval=obj.i_p_Ca(obj.CAI(:,:,i));
+            i_NaCa_eval=obj.i_NaCa(Vold,Na_iold,obj.CAI(:,i));
+            i_b_Ca_eval=obj.i_b_Ca(Vold,obj.CAI(:,i));
+            i_p_Ca_eval=obj.i_p_Ca(obj.CAI(:,i));
             i_p_K_eval=obj.i_p_K(Vold,K_iold);   
             
             dK_i_eval = -1.d0.*(i_K1_eval+i_to_eval+i_Kr_eval+i_Ks_eval+i_p_K_eval-2.d0.*i_NaK_eval)./(1.d0.*obj.V_c.*obj.F).*obj.Cm;
-            obj.KI(:,:,i) = K_iold+obj.dt.*dK_i_eval;
+            obj.KI(:,i) = K_iold+obj.dt.*dK_i_eval;
             
             dNa_i_eval = -1.d0*(i_Na_eval+i_b_Na_eval+3.d0.*i_NaK_eval+3.d0.*i_NaCa_eval)./(1.d0*obj.V_c*obj.F)*obj.Cm;
-            obj.NAI(:,:,i)=Na_iold+obj.dt.*dNa_i_eval;
+            obj.NAI(:,i)=Na_iold+obj.dt.*dNa_i_eval;
 
             Iion=i_K1_eval+i_to_eval+i_Kr_eval+i_Ks_eval+i_CaL_eval+i_NaK_eval+i_Na_eval+i_b_Na_eval+i_NaCa_eval+i_b_Ca_eval+i_p_K_eval+i_p_Ca_eval;
         

@@ -40,8 +40,8 @@ I_K =@(V,n)  ( g_K * n^4 * (V - U_K)    );
 I_L =@(V)    ( g_L * (V - U_L)          );
 
 
-Tf=30/5;
-nt=5000/5;
+Tf=30;
+nt=5000;
 dt=Tf/nt;
 T=linspace(0,Tf,nt+1);
 
