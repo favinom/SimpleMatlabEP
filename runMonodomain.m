@@ -1,7 +1,7 @@
 clear all
 close all
 
-dim=0;
+dim=3;
 ionicModelType=1; % 1 HH % 2 TT
 factorize=0;
 

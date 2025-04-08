@@ -16,9 +16,11 @@ end
 if i<10000
     istr=['0',istr];
 end
-fid=fopen(['sol_',istr,'.vtk'],'w');
 
+fid=fopen(['sol_',istr,'.vtk'],'w');
 fprintf(fid,'# vtk DataFile Version 3.0\n');
+
+
 fprintf(fid,'Example structured points dataset\n');
 fprintf(fid,'ASCII\n');
 fprintf(fid,'\n');

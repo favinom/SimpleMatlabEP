@@ -27,9 +27,12 @@ classdef HodgkinHuxley < handle
         I_K
         I_L
         % variables()
-        M
-        H
-        N
+        Mo
+        Ho
+        No
+        Mn
+        Hn
+        Nn
         %
         dt
 
@@ -62,36 +65,40 @@ classdef HodgkinHuxley < handle
             obj.I_K =@(V,n)  ( obj.g_K * n.^4 .* (V - obj.U_K)    );
             obj.I_L =@(V)    ( obj.g_L * (V - obj.U_L)          );
 
-            obj.M=zeros(size(V));
-            obj.H=zeros(size(V));
-            obj.N=zeros(size(V));
+            obj.Mo=zeros(size(V));
+            obj.Ho=zeros(size(V));
+            obj.No=zeros(size(V));
+
+            obj.Mn=zeros(size(V));
+            obj.Hn=zeros(size(V));
+            obj.Nn=zeros(size(V));
 
             % supponiamo sia 2D
-            obj.M(:,1)=obj.m0;
-            obj.H(:,1)=obj.h0;
-            obj.N(:,1)=obj.n0;
+            obj.Mn(:)=obj.m0;
+            obj.Hn(:)=obj.h0;
+            obj.Nn(:)=obj.n0;
             % dt
             obj.dt=dt;
 
         end
         function solveTimestep(obj,Vold,i)
-            mold=obj.M(:,i-1);
-            hold=obj.H(:,i-1);
-            nold=obj.N(:,i-1);
-            rhs1eval=obj.rhs1(mold,Vold);
-            rhs2eval=obj.rhs2(hold,Vold);
-            rhs3eval=obj.rhs3(nold,Vold);
-            obj.M(:,i)=mold+obj.dt*rhs1eval;
-            obj.H(:,i)=hold+obj.dt*rhs2eval;
-            obj.N(:,i)=nold+obj.dt*rhs3eval;
+            rhs1eval=obj.rhs1(obj.Mo,Vold);
+            rhs2eval=obj.rhs2(obj.Ho,Vold);
+            rhs3eval=obj.rhs3(obj.No,Vold);
+            obj.Mn=obj.Mo+obj.dt*rhs1eval;
+            obj.Hn=obj.Ho+obj.dt*rhs2eval;
+            obj.Nn=obj.No+obj.dt*rhs3eval;
         end
         function Iion=evaluateCurr(obj,Vold,i)
-                I_Na_eval=obj.I_Na(Vold,obj.M(:,i),obj.H(:,i));
-                I_K_eval=obj.I_K(Vold,obj.N(:,i));
+                I_Na_eval=obj.I_Na(Vold,obj.Mn,obj.Hn);
+                I_K_eval=obj.I_K(Vold,obj.Nn);
                 I_L_eval=obj.I_L(Vold);
                 Iion=I_Na_eval+I_K_eval+I_L_eval;
         end
         function Iion=getCurr(obj,Vold,i)
+            obj.Mo=obj.Mn;
+            obj.Ho=obj.Hn;
+            obj.No=obj.Nn;
             obj.solveTimestep(Vold,i);
             Iion=obj.evaluateCurr(Vold,i);
         end
