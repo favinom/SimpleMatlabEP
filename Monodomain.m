@@ -47,14 +47,21 @@ classdef Monodomain < handle
                 obj.H=chol(obj.Mat);
             end
             
+            obj.Vn=zeros(obj.pg.nv);
+            obj.Vn(:,1)=U_rest;
+
             obj.V=zeros(size(L,1),length(T));
-            obj.V(:,1)=U_rest;
+            obj.V(:,1)=obj.Vn;
 
             obj.ionicModelType=ionicModelType;
             if ionicModelType==1
                 obj.ionicModel=HodgkinHuxley(obj.V,obj.dt);
             end
+            if ionicModelType==2
+                obj.ionicModel=TenTusscher(obj.V,obj.dt);
+            end
             obj.exportStep=1;
+            exportVTK(obj.Vn,obj.pg,0);
         end
         function run(obj)
             nameCounter=0;
@@ -84,11 +91,11 @@ classdef Monodomain < handle
                 end
 
                 % PROTOCOL FOR SPIRAL WAVES
-                if (i==3334)
-                    [X,Y,Z]=obj.pg.getCoo;
-                    which=find(Y<0.5 | X<0.5);
-                    Vn(which)=obj.U_rest;
-                end
+                %if (i==3334)
+                %    [X,Y,Z]=obj.pg.getCoo;
+                %    which=find(Y<0.5 | X<0.5);
+                %    Vn(which)=obj.U_rest;
+                %end
 
                 obj.V(:,i)=Vn;
 
