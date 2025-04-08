@@ -1,6 +1,6 @@
 clear; close all; clc;
 
-mesh_sizes = [64, 128, 256, 512, 1024]; % puoi aggiungere 1024 se vuoi
+mesh_sizes = [64, 128, 256, 512, 1024]; 
 Xf = 1; Yf = 1;
 
 for idx = 1:length(mesh_sizes)
@@ -48,7 +48,8 @@ for idx = 1:length(mesh_sizes)
     fcn_fact = @(x) app_SP_fact(x,L_S,H,LSi,LiS);
 
     tic;
-    [x_dd,flag_dd,relres_dd,iter_dd] = pcg(fcn_fact,b,1e-7,1000);
+    [x_dd] = pcg(fcn_fact,b,1e-7,1000);
+    % [x_dd,flag_dd,relres_dd,iter_dd] = pcg(fcn_fact,b,1e-7,1000);
     time_dd = toc;
 
     % --------------------
@@ -56,24 +57,25 @@ for idx = 1:length(mesh_sizes)
     % --------------------
     b_full = V(:);
     tic;
-    [x_full,flag_full,relres_full,iter_full] = pcg(L,b_full,1e-8,1000);
+    % [x_full,flag_full,relres_full,iter_full] = pcg(L,b_full,1e-8,1000);
+    [x_full] = pcg(L,b_full,1e-7,1000);
     time_full = toc;
 
     % --------------------
     % Confronto risultati
     % --------------------
-    x_dd_full = zeros(size(L,1),1);
-    x_dd_full(id_S) = x_dd;
+    %x_dd_full = zeros(size(L,1),1);
+    %x_dd_full(id_S) = x_dd;
     
     res_full = norm(b_full - L*x_full);
-    res_dd = norm(b_full - L*x_dd_full);
-    err_rel_dd = norm(x_full(id_S) - x_dd) / norm(x_full(id_S));
+    %res_dd = norm(b_full - L*x_dd_full);
+    %err_rel_dd = norm(x_full(id_S) - x_dd) / norm(x_full(id_S));
     
-    fprintf('  Tempo PCG globale:     %.4f s (iter: %d)\n', time_full, iter_full);
-    fprintf('  Residuo globale:       %.2e\n', res_full);
-    fprintf('  Tempo PCG con DD:      %.4f s (iter: %d)\n', time_dd, iter_dd);
-    fprintf('  Residuo con DD:        %.2e\n', res_dd);
-    fprintf('  Errore relativo (DD):  %.2e\n', err_rel_dd);
+    %fprintf('  Tempo PCG globale:     %.4f s (iter: %d)\n', time_full, iter_full);
+    %fprintf('  Residuo globale:       %.2e\n', res_full);
+    %fprintf('  Tempo PCG con DD:      %.4f s (iter: %d)\n', time_dd, iter_dd);
+    %fprintf('  Residuo con DD:        %.2e\n', res_dd);
+    %fprintf('  Errore relativo (DD):  %.2e\n', err_rel_dd);
 
     % Pulizia
     clear id id_S Lii H LSi LiS;

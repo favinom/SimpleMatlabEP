@@ -19,7 +19,7 @@ for idx = 1:length(mesh_sizes)
     
     % Assembla matrici
     [M,L] = assembleMatrices_old(hx,hy);
-    L = L + 0.0001*M;
+    L = L + 0.1*M;
 
     node_id = 1:(nex+1)*(ney+1);
     
@@ -64,7 +64,12 @@ for idx = 1:length(mesh_sizes)
     fcn_fact = @(x) app_SP_fact(x,L_S,H,LSi,LiS);
 
     tic;
-    [x_dd,flag_dd,relres_dd,iter_dd] = pcg(fcn_fact,b,1e-18,1000);
+    [x_dd,flag_dd,relres_dd,iter_dd] = pcg(fcn_fact,b,1e-7,1000);
+    if flag_dd==0
+        disp('pcg dd converge')
+    elseif flag_dd==3
+        disp('pcg dd NON converge')
+    end
     time_dd = toc;
 
     % --------------------
@@ -72,7 +77,12 @@ for idx = 1:length(mesh_sizes)
     % --------------------
     b_full = V(:);
     tic;
-    [x_full,flag_full,relres_full,iter_full] = pcg(L,b_full,1e-8,1000);
+    [x_full,flag_full,relres_full,iter_full] = pcg(L,b_full,1e-7,1000);
+    if flag_full==0
+        disp('pcg full converge')
+    elseif flag_full==3
+        disp('pcg full NON converge')
+    end
     time_full = toc;
 
     % --------------------

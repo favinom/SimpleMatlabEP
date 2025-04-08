@@ -14,7 +14,7 @@ hy=diff(y);
 [X,Y]=ndgrid(x,y);
 
 [M,L]=assembleMatrices_old(hx,hy);
-L=L+0.0001*M; 
+L=L+0.001*M; 
 
 node_id = 1:(nex+1)*(ney+1);
 
@@ -43,12 +43,12 @@ b=V(id_S)';
 tic
 %fcn =@(x) app_SP(x,L_S,Lii,LSi,LiS);
 fcn_fact =@(x) app_SP_fact(x,L_S,H,LSi,LiS);
-x = pcg(fcn_fact,b,1e-8,1000);
+x = pcg(fcn_fact,b,1e-7,1000);
 toc
 
 
 bfull=V(:);
 
 tic
-xfull = pcg(L,bfull,1e-8,1000);
+xfull = pcg(L,bfull,1e-6,1000);
 toc
