@@ -52,11 +52,11 @@ classdef SteklovPoincare < handle
             end
         end
         function prepareApp(obj)
-            obj.fcn_fact=@(x)( app_fact(x,obj.Ass,obj.H,obj.Asi,obj.Ais) );
+            obj.fcn_fact=@(x)( app_SP_fact(x,obj.Ass,obj.H,obj.Asi,obj.Ais) );
         end
 
         function [x_dd,flag,res,iter]=solve(obj,toll,maxit)
-            [x_dd,flag,res,iter]=pcg(obj.fcn_fact,obj.rhs,toll,maxit,[],[],xs);
+            [x_dd,flag,res,iter]=pcg(obj.fcn_fact,obj.rhs,toll,maxit,[],[],obj.xs);
             obj.xs=x_dd;
         end
     end
