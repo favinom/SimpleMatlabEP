@@ -81,7 +81,7 @@ classdef Bidomain < handle
             end
             obj.exportStep=1;
             
-            exportVTK_bido(obj.Vn,obj.un,obj.pg,0);
+            exportVTK(obj.Vn,obj.un,obj.pg,0,0);
         end
         function run(obj)
             nameCounter=0;
@@ -130,7 +130,7 @@ classdef Bidomain < handle
 
                 if mod(i,obj.exportStep)==0
                     nameCounter=nameCounter+1;
-                    exportVTK_bido(obj.Vn,obj.un,obj.pg,nameCounter);
+                    exportVTK(obj.Vn,obj.un,obj.pg,nameCounter,1);
                 end
             end
         end

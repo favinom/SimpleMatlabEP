@@ -63,7 +63,7 @@ classdef Monodomain < handle
             end
             obj.exportStep=1;
             
-            exportVTK(obj.Vn,obj.pg,0);
+            exportVTK(obj.Vn,[],obj.pg,0,0);
         end
         function run(obj)
             nameCounter=0;
@@ -107,7 +107,7 @@ classdef Monodomain < handle
 
                 if mod(i,obj.exportStep)==0
                     nameCounter=nameCounter+1;
-                    exportVTK(obj.Vn,obj.pg,nameCounter);
+                    exportVTK(obj.Vn,[],obj.pg,nameCounter,0);
                 end
             end
         end
