@@ -1,6 +1,6 @@
 clear; close all; clc;
 
-mesh_sizes = [64, 128, 256, 512];  % Puoi aggiungere 512, 1024 se vuoi (richiede più tempo/memoria)
+mesh_sizes = [64, 128, 256, 512];  % Puoi aggiungere 512, 1024 se vuoi 
 Xf = 1; Yf = 1;
 
 for idx = 1:length(mesh_sizes)
