@@ -28,7 +28,7 @@ classdef Bidomain < handle
 
         ionicModel
 
-        diff
+        %diff
         Iapp
         IappStartTime
         IappStopTime
@@ -81,7 +81,7 @@ classdef Bidomain < handle
             end
             obj.exportStep=1;
             
-            exportVTK(obj.Vn,obj.un,obj.pg,0,0);
+            exportVTK(obj.Vn,obj.un,obj.pg,0,1);
         end
         function run(obj)
             nameCounter=0;
@@ -112,11 +112,15 @@ classdef Bidomain < handle
                     y=obj.H'\rhs;
                     obj.Vn=obj.H\y;
                 else
-                    [obj.Vn,~,~]=pcg(obj.Mat,rhs,[],[],[],[],obj.Vo);
+                    [obj.Vn,~,~]=pcg(obj.Mat,rhs,1e-7,1000,obj.H,obj.H',obj.Vo);
                 end
 
-                rhs=-obj.Li*obj.Vo;
-                [obj.un,~,~]=pcg(obj.Mat2,rhs,[],[],[],[],obj.uo);
+                clear rhs
+
+                rhs=-obj.Li*obj.Vn;
+                [obj.un,~,~]=pcg(obj.Mat2,rhs,1e-7,1000,[],[],obj.uo);
+
+                clear rhs
 
 
                 % PROTOCOL FOR SPIRAL WAVES

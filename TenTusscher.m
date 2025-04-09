@@ -73,12 +73,6 @@ classdef TenTusscher < handle
         pr0
         s0
 
-
-
-
-
-
-
         % TT functions
         E_Ca 
         E_K 
@@ -186,24 +180,42 @@ classdef TenTusscher < handle
 
 
         % variables()
-        D
-        F2
-        FCASS
-        PF
-        CASR
-        CAI
-        CASS
-        REL
-        H
-        J
-        M
-        KI
-        XR1
-        XR2
-        XS
-        NAI
-        PR
-        S
+        Do
+        F2o
+        FCASSo
+        PFo
+        CASRo
+        CAIo
+        CASSo
+        RELo
+        Ho
+        Jo
+        Mo
+        KIo
+        XR1o
+        XR2o
+        XSo
+        NAIo
+        PRo
+        So
+        Dn
+        F2n
+        FCASSn
+        PFn
+        CASRn
+        CAIn
+        CASSn
+        RELn
+        Hn
+        Jn
+        Mn
+        KIn
+        XR1n
+        XR2n
+        XSn
+        NAIn
+        PRn
+        Sn
         
         %
         dt
@@ -387,44 +399,62 @@ classdef TenTusscher < handle
             obj.i_b_Na =@(V,Na_i) obj.g_bna.*(V-obj.E_Na(Na_i));
             obj.i_p_K =@(V,K_i) obj.g_pK.*(V-obj.E_K(K_i))./(1.d0+exp((25.d0-V)./5.98d0));
 
-            obj.D=zeros(size(V));
-            obj.F2=zeros(size(V));
-            obj.FCASS=zeros(size(V));
-            obj.PF=zeros(size(V));
-            obj.CASR=zeros(size(V));
-            obj.CAI=zeros(size(V));
-            obj.CASS=zeros(size(V));
-            obj.REL=zeros(size(V));
-            obj.H=zeros(size(V));
-            obj.J=zeros(size(V));
-            obj.M=zeros(size(V));
-            obj.KI=zeros(size(V));
-            obj.XR1=zeros(size(V));
-            obj.XR2=zeros(size(V));
-            obj.XS=zeros(size(V));
-            obj.NAI=zeros(size(V));
-            obj.PR=zeros(size(V));
-            obj.S=zeros(size(V));
+            obj.Do=zeros(size(V));
+            obj.F2o=zeros(size(V));
+            obj.FCASSo=zeros(size(V));
+            obj.PFo=zeros(size(V));
+            obj.CASRo=zeros(size(V));
+            obj.CAIo=zeros(size(V));
+            obj.CASSo=zeros(size(V));
+            obj.RELo=zeros(size(V));
+            obj.Ho=zeros(size(V));
+            obj.Jo=zeros(size(V));
+            obj.Mo=zeros(size(V));
+            obj.KIo=zeros(size(V));
+            obj.XR1o=zeros(size(V));
+            obj.XR2o=zeros(size(V));
+            obj.XSo=zeros(size(V));
+            obj.NAIo=zeros(size(V));
+            obj.PRo=zeros(size(V));
+            obj.So=zeros(size(V));
 
-            % supponiamo sia 2D
-            obj.D(:,1)=obj.d0;
-            obj.F2(:,1)=obj.f20;
-            obj.FCASS(:,1)=obj.fCass0;
-            obj.PF(:,1)=obj.pf0;
-            obj.CASR(:,1)=obj.Ca_sr0;
-            obj.CAI(:,1)=obj.Ca_i0;
-            obj.CASS(:,1)=obj.Ca_ss0;
-            obj.REL(:,1)=obj.Rel0;
-            obj.H(:,1)=obj.h0;
-            obj.J(:,1)=obj.j0;
-            obj.M(:,1)=obj.m0;
-            obj.KI(:,1)=obj.K_i0;
-            obj.XR1(:,1)=obj.xr10;
-            obj.XR2(:,1)=obj.xr20;
-            obj.XS(:,1)=obj.xs0;
-            obj.NAI(:,1)=obj.Na_i0;
-            obj.PR(:,1)=obj.pr0;
-            obj.S(:,1)=obj.s0;
+            obj.Dn=zeros(size(V));
+            obj.F2n=zeros(size(V));
+            obj.FCASSn=zeros(size(V));
+            obj.PFn=zeros(size(V));
+            obj.CASRn=zeros(size(V));
+            obj.CAIn=zeros(size(V));
+            obj.CASSn=zeros(size(V));
+            obj.RELn=zeros(size(V));
+            obj.Hn=zeros(size(V));
+            obj.Jn=zeros(size(V));
+            obj.Mn=zeros(size(V));
+            obj.KIn=zeros(size(V));
+            obj.XR1n=zeros(size(V));
+            obj.XR2n=zeros(size(V));
+            obj.XSn=zeros(size(V));
+            obj.NAIn=zeros(size(V));
+            obj.PRn=zeros(size(V));
+            obj.Sn=zeros(size(V));
+
+            obj.Dn(:,1)=obj.d0;
+            obj.F2n(:,1)=obj.f20;
+            obj.FCASSn(:,1)=obj.fCass0;
+            obj.PFn(:,1)=obj.pf0;
+            obj.CASRn(:,1)=obj.Ca_sr0;
+            obj.CAIn(:,1)=obj.Ca_i0;
+            obj.CASSn(:,1)=obj.Ca_ss0;
+            obj.RELn(:,1)=obj.Rel0;
+            obj.Hn(:,1)=obj.h0;
+            obj.Jn(:,1)=obj.j0;
+            obj.Mn(:,1)=obj.m0;
+            obj.KIn(:,1)=obj.K_i0;
+            obj.XR1n(:,1)=obj.xr10;
+            obj.XR2n(:,1)=obj.xr20;
+            obj.XSn(:,1)=obj.xs0;
+            obj.NAIn(:,1)=obj.Na_i0;
+            obj.PRn(:,1)=obj.pr0;
+            obj.Sn(:,1)=obj.s0;
             % dt
             obj.dt=dt;
 
@@ -432,115 +462,110 @@ classdef TenTusscher < handle
 
 
         function Iion=solveTimestep(obj,Vold,i)
-            dold=obj.D(:,i-1);
-            f2old=obj.F2(:,i-1);
-            fCassold=obj.FCASS(:,i-1);
-            pfold=obj.PF(:,i-1);
-            Ca_srold=obj.CASR(:,i-1);
-            Ca_iold=obj.CAI(:,i-1);
-            Ca_ssold=obj.CASS(:,i-1);
-            Relold=obj.REL(:,i-1);
-            hold=obj.H(:,i-1);
-            jold=obj.J(:,i-1);
-            mold=obj.M(:,i-1);
-            K_iold=obj.KI(:,i-1);
-            xr1old=obj.XR1(:,i-1);
-            xr2old=obj.XR2(:,i-1);
-            xsold=obj.XS(:,i-1);
-            Na_iold=obj.NAI(:,i-1);
-            prold=obj.PR(:,i-1);
-            sold=obj.S(:,i-1);
-
             d_inf_eval = obj.d_inf(Vold);
             tau_d_eval = obj.tau_d(Vold);
-            obj.D(:,i)=d_inf_eval+(dold-d_inf_eval).*exp(-obj.dt./tau_d_eval);
+            obj.Dn=d_inf_eval+(obj.Do-d_inf_eval).*exp(-obj.dt./tau_d_eval);
         
             f2_inf_eval = obj.f2_inf(Vold);
             tau_f2_eval = obj.tau_f2(Vold);
-            obj.F2(:,i)=f2_inf_eval+(f2old-f2_inf_eval).*exp(-obj.dt./tau_f2_eval);
+            obj.F2n=f2_inf_eval+(obj.F2o-f2_inf_eval).*exp(-obj.dt./tau_f2_eval);
         
-            fCass_inf_eval = obj.fCass_inf(Vold,Ca_ssold);
-            tau_fCass_eval = obj.tau_fCass(Vold,Ca_ssold);
-            obj.FCASS(:,i)=fCass_inf_eval+(fCassold-fCass_inf_eval).*exp(-obj.dt./tau_fCass_eval);
+            fCass_inf_eval = obj.fCass_inf(Vold,obj.CASSo);
+            tau_fCass_eval = obj.tau_fCass(Vold,obj.CASSo);
+            obj.FCASSn=fCass_inf_eval+(obj.FCASSo-fCass_inf_eval).*exp(-obj.dt./tau_fCass_eval);
             
             f_inf_eval = obj.f_inf(Vold);
             tau_f_eval = obj.tau_f(Vold);
-            obj.PF(:,i)=f_inf_eval+(pfold-f_inf_eval).*exp(-obj.dt./tau_f_eval);
+            obj.PFn=f_inf_eval+(obj.PFo-f_inf_eval).*exp(-obj.dt./tau_f_eval);
         
-            dRel_eval = obj.dRel(Ca_ssold, Relold, Ca_srold);
-            obj.REL(:,i)=Relold+obj.dt.*dRel_eval;
+            dRel_eval = obj.dRel(obj.CASSo, obj.RELo, obj.CASRo);
+            obj.RELn=obj.RELo+obj.dt.*dRel_eval;
         
-            dCa_i_eval = obj.dCa_i(Na_iold, Ca_ssold, Ca_srold, Ca_iold, Vold);
-            obj.CAI(:,i)=Ca_iold+obj.dt.*dCa_i_eval;
+            dCa_i_eval = obj.dCa_i(obj.NAIo, obj.CASSo, obj.CASRo, obj.CAIo, Vold);
+            obj.CAIn=obj.CAIo+obj.dt.*dCa_i_eval;
         
-            dCa_sr_eval = obj.dCa_sr(Relold, Ca_srold, Ca_iold, Ca_ssold);
-            obj.CASR(:,i)=Ca_srold+obj.dt.*dCa_sr_eval;
+            dCa_sr_eval = obj.dCa_sr(obj.RELo, obj.CASRo, obj.CAIo, obj.CASSo);
+            obj.CASRn=obj.CASRo+obj.dt.*dCa_sr_eval;
         
-            dCa_ss_eval=obj.dCa_ss(Relold,Vold,dold,pfold,f2old,fCassold,Ca_ssold,Ca_srold,Ca_iold);
-            obj.CASS(:,i)=Ca_ssold+obj.dt.*dCa_ss_eval;
+            dCa_ss_eval=obj.dCa_ss(obj.RELo,Vold,obj.Do,obj.PFo,obj.F2o,obj.FCASSo,obj.CASSo,obj.CASRo,obj.CAIo);
+            obj.CASSn=obj.CASSo+obj.dt.*dCa_ss_eval;
         
             h_inf_eval=obj.h_inf(Vold);
             tau_h_eval=obj.tau_h(Vold);
-            obj.H(:,i)=h_inf_eval+(hold-h_inf_eval).*exp(-obj.dt./tau_h_eval);
+            obj.Hn=h_inf_eval+(obj.Ho-h_inf_eval).*exp(-obj.dt./tau_h_eval);
         
             j_inf_eval=obj.j_inf(Vold);
             tau_j_eval=obj.tau_j(Vold);
-            obj.J(:,i)=j_inf_eval+(jold-j_inf_eval).*exp(-obj.dt./tau_j_eval);
+            obj.Jn=j_inf_eval+(obj.Jo-j_inf_eval).*exp(-obj.dt./tau_j_eval);
         
             m_inf_eval=obj.m_inf(Vold);
             tau_m_eval=obj.tau_m(Vold);
-            obj.M(:,i)=m_inf_eval+(mold-m_inf_eval).*exp(-obj.dt./tau_m_eval);
+            obj.Mn=m_inf_eval+(obj.Mo-m_inf_eval).*exp(-obj.dt./tau_m_eval);
         
             xr1_inf_eval=obj.xr1_inf(Vold);
             tau_xr1_eval=obj.tau_xr1(Vold);
-            obj.XR1(:,i)=xr1_inf_eval+(xr1old-xr1_inf_eval).*exp(-obj.dt./tau_xr1_eval);
+            obj.XR1n=xr1_inf_eval+(obj.XR1o-xr1_inf_eval).*exp(-obj.dt./tau_xr1_eval);
         
             xr2_inf_eval=obj.xr2_inf(Vold);
             tau_xr2_eval=obj.tau_xr2(Vold);
-            obj.XR2(:,i)=xr2_inf_eval+(xr2old-xr2_inf_eval).*exp(-obj.dt./tau_xr2_eval);
+            obj.XR2n=xr2_inf_eval+(obj.XR2o-xr2_inf_eval).*exp(-obj.dt./tau_xr2_eval);
         
             xs_inf_eval=obj.xs_inf(Vold);
             tau_xs_eval=obj.tau_xs(Vold);
-            obj.XS(:,i)=xs_inf_eval+(xsold-xs_inf_eval).*exp(-obj.dt./tau_xs_eval);
+            obj.XSn=xs_inf_eval+(obj.XSo-xs_inf_eval).*exp(-obj.dt./tau_xs_eval);
         
             r_inf_eval=obj.r_inf(Vold);
             tau_r_eval=obj.tau_r(Vold);
-            obj.PR(:,i)=r_inf_eval+(prold-r_inf_eval).*exp(-obj.dt./tau_r_eval);
+            obj.PRn=r_inf_eval+(obj.PRo-r_inf_eval).*exp(-obj.dt./tau_r_eval);
         
             s_inf_eval=obj.s_inf(Vold);
             tau_s_eval=obj.tau_s(Vold);
-            obj.S(:,i)=s_inf_eval+(sold-s_inf_eval).*exp(-obj.dt./tau_s_eval);
+            obj.Sn=s_inf_eval+(obj.So-s_inf_eval).*exp(-obj.dt./tau_s_eval);
 
 
-            i_K1_eval=obj.i_K1(Vold,K_iold);
-            i_to_eval=obj.i_to(Vold, obj.PR(:,i), obj.S(:,i),K_iold);
-            i_Kr_eval=obj.i_Kr(Vold,obj.XR1(:,i), obj.XR2(:,i),K_iold);
-            i_Ks_eval=obj.i_Ks(Vold, Na_iold, obj.XS(:,i),K_iold);
-            i_CaL_eval=obj.i_CaL(Vold,obj.D(:,i),obj.PF(:,i),obj.F2(:,i),obj.FCASS(:,i),obj.CASS(:,i));
-            i_NaK_eval=obj.i_NaK(Vold,Na_iold);
-            i_Na_eval=obj.i_Na(Vold,obj.M(:,i),obj.H(:,i),obj.J(:,i),Na_iold);
-            i_b_Na_eval=obj.i_b_Na(Vold,Na_iold);
-            i_NaCa_eval=obj.i_NaCa(Vold,Na_iold,obj.CAI(:,i));
-            i_b_Ca_eval=obj.i_b_Ca(Vold,obj.CAI(:,i));
-            i_p_Ca_eval=obj.i_p_Ca(obj.CAI(:,i));
-            i_p_K_eval=obj.i_p_K(Vold,K_iold);   
+            i_K1_eval=obj.i_K1(Vold,obj.KIo);
+            i_to_eval=obj.i_to(Vold, obj.PRn, obj.Sn,obj.KIo);
+            i_Kr_eval=obj.i_Kr(Vold,obj.XR1n, obj.XR2n,obj.KIo);
+            i_Ks_eval=obj.i_Ks(Vold, obj.NAIo, obj.XSn,obj.KIo);
+            i_CaL_eval=obj.i_CaL(Vold,obj.Dn,obj.PFn,obj.F2n,obj.FCASSn,obj.CASSn);
+            i_NaK_eval=obj.i_NaK(Vold,obj.NAIo);
+            i_Na_eval=obj.i_Na(Vold,obj.Mn,obj.Hn,obj.Jn,obj.NAIo);
+            i_b_Na_eval=obj.i_b_Na(Vold,obj.NAIo);
+            i_NaCa_eval=obj.i_NaCa(Vold,obj.NAIo,obj.CAIn);
+            i_b_Ca_eval=obj.i_b_Ca(Vold,obj.CAIn);
+            i_p_Ca_eval=obj.i_p_Ca(obj.CAIn);
+            i_p_K_eval=obj.i_p_K(Vold,obj.KIo);   
             
             dK_i_eval = -1.d0.*(i_K1_eval+i_to_eval+i_Kr_eval+i_Ks_eval+i_p_K_eval-2.d0.*i_NaK_eval)./(1.d0.*obj.V_c.*obj.F).*obj.Cm;
-            obj.KI(:,i) = K_iold+obj.dt.*dK_i_eval;
+            obj.KIn = obj.KIo+obj.dt.*dK_i_eval;
             
             dNa_i_eval = -1.d0*(i_Na_eval+i_b_Na_eval+3.d0.*i_NaK_eval+3.d0.*i_NaCa_eval)./(1.d0*obj.V_c*obj.F)*obj.Cm;
-            obj.NAI(:,i)=Na_iold+obj.dt.*dNa_i_eval;
+            obj.NAIn=obj.NAIo+obj.dt.*dNa_i_eval;
 
             Iion=i_K1_eval+i_to_eval+i_Kr_eval+i_Ks_eval+i_CaL_eval+i_NaK_eval+i_Na_eval+i_b_Na_eval+i_NaCa_eval+i_b_Ca_eval+i_p_K_eval+i_p_Ca_eval;
-        
-        
-        
         end
         
         
-        
-        
         function Iion=getCurr(obj,Vold,i)
+            obj.Do=obj.Dn;
+            obj.F2o=obj.F2n;
+            obj.FCASSo=obj.FCASSn;
+            obj.PFo=obj.PFn;
+            obj.CASRo=obj.CASRn;
+            obj.CAIo=obj.CAIn;
+            obj.CASSo=obj.CASSn;
+            obj.RELo=obj.RELn;
+            obj.Ho=obj.Hn;
+            obj.Jo=obj.Jn;
+            obj.Mo=obj.Mn;
+            obj.KIo=obj.KIn;
+            obj.XR1o=obj.XR1n;
+            obj.XR2o=obj.XR2n;
+            obj.XSo=obj.XSn;
+            obj.NAIo=obj.NAIn;
+            obj.PRo=obj.PRn;
+            obj.So=obj.Sn;
+
             Iion=obj.solveTimestep(Vold,i);
         end
     end

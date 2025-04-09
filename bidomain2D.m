@@ -6,13 +6,13 @@ Di=3.15e-4;
 De=1.35e-3;
 
 % condizioni iniziali
-%U_rest = -54.387;                 %  HH
-U_rest = -85.23;                    %  TT
+U_rest = -54.387;                 %  HH
+%U_rest = -85.23;                 %  TT
 
 
 
-%Tf=30;           %  HH
-Tf=500;           %  TT
+Tf=30;           %  HH
+%Tf=500;         %  TT
 nt=5000;
 dt=Tf/nt;
 T=linspace(0,Tf,nt+1);
@@ -29,7 +29,7 @@ hy=diff(y);
 
 [X,Y]=ndgrid(x,y);
 
-[M,L]=assembleMatrices(hx,hy);
+[M,L]=assembleMatrices_old(hx,hy);
 
 Li=Di*L;
 Lie=(Di+De)*L;
@@ -51,8 +51,8 @@ u=zeros(nex+1,ney+1,nt+1);
 V(:,:,1)=U_rest;
 u(:,:,1)=0;
 
-%ionicModel=HodgkinHuxley(V,dt);
-ionicModel=TenTusscher(V,dt);
+ionicModel=HodgkinHuxley(V,dt);
+%ionicModel=TenTusscher(V,dt);
 
 Iapp=zeros(size(V(:,:,1)));
 which=find(X<0.2 & Y<0.2);

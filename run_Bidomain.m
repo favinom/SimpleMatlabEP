@@ -2,13 +2,13 @@ clear all
 close all
 
 dim=2;
-ionicModelType=1; % 1 HH % 2 TT
+ionicModelType=2; % 1 HH % 2 TT
 factorize=0;
 
 if ionicModelType==1
     U_rest = -54.387;
-    Tf=6;%*10;
-    nt=5000*10;
+    Tf=30;%*10;
+    nt=5000;%*10;
 end
 if ionicModelType==2
     U_rest = -85.23; 
@@ -66,7 +66,7 @@ Iapp(which)=1;
 
 bd=Bidomain(pg,M,L,T,ionicModelType,factorize,U_rest);
 
-% md.V(:,1)=U_rest;
+bd.V(:,1)=U_rest;
 
 bd.IappStartTime=5;
 bd.IappStopTime=5.3;
