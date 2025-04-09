@@ -31,5 +31,3 @@ ay=spdiags( [-hyz (hyz+zhy) -zhy], [-1 0 1], nvy,nvy);
 
 M=kron(my,mx);
 L=kron(my,ax)+kron(ay,mx);
-
-
