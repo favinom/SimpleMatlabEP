@@ -1,18 +1,27 @@
-classdef Monodomain < handle
+classdef Bidomain < handle
     properties
         pg
 
+        Di
+        De
+        Li
+        Lie
+        
         M
         L
         Mat
+        Mat2
         H
         
         T
         dt
-        
+
         V
+        u
         Vn
+        un
         Vo
+        uo
         
         factorize
         ionicModelType
@@ -31,24 +40,33 @@ classdef Monodomain < handle
 
     end
     methods
-        function obj=Monodomain(pg,M,L,T,ionicModelType,factorize,U_rest)
+        function obj=Bidomain(pg,M,L,T,ionicModelType,factorize,U_rest)
             obj.pg=pg;
 
             obj.U_rest=U_rest;
 
             obj.T=T;
             obj.dt=T(2)-T(1);
-            obj.diff=1e-3;
+            %obj.diff=1e-3;
+
+            obj.Di=3.15e-4;
+            obj.De=1.35e-3;
 
             obj.M=M;
             obj.L=L;
-            obj.Mat=M+obj.dt*1e-3*L;
+            obj.Li=obj.Di*obj.L;
+            obj.Lie=(obj.Di+obj.De)*obj.L;
+
+            obj.Mat=M+obj.dt*L;
             if factorize
                 obj.H=chol(obj.Mat);
             end
+            obj.Mat2=obj.Lie;
             
             obj.Vn=zeros(obj.pg.nv,1);
             obj.Vo=zeros(obj.pg.nv,1);
+            obj.un=zeros(obj.pg.nv,1);
+            obj.uo=zeros(obj.pg.nv,1);
             obj.Vn(:,1)=U_rest;
 
             %obj.V=zeros(size(L,1),length(T));
@@ -63,7 +81,7 @@ classdef Monodomain < handle
             end
             obj.exportStep=1;
             
-            exportVTK(obj.Vn,obj.pg,0);
+            exportVTK_bido(obj.Vn,obj.un,obj.pg,0);
         end
         function run(obj)
             nameCounter=0;
@@ -72,6 +90,7 @@ classdef Monodomain < handle
                 t=obj.T(i);
                 
                 obj.Vo=obj.Vn;
+                obj.uo=obj.un;
 
                 if mod(i,100)==0
                     disp(['t=', num2str(t),'Vmax=',num2str(max(obj.Vo))])
@@ -87,7 +106,7 @@ classdef Monodomain < handle
                 Itot=Iapp2-Iion;
 
                 rhs=obj.Vo+obj.dt*Itot;
-                rhs=obj.M*rhs;
+                rhs=obj.M*rhs-obj.dt*obj.Li*obj.uo;
 
                 if obj.factorize
                     y=obj.H'\rhs;
@@ -95,6 +114,10 @@ classdef Monodomain < handle
                 else
                     [obj.Vn,~,~]=pcg(obj.Mat,rhs,[],[],[],[],obj.Vo);
                 end
+
+                rhs=-obj.Li*obj.Vo;
+                [obj.un,~,~]=pcg(obj.Mat2,rhs,[],[],[],[],obj.uo);
+
 
                 % PROTOCOL FOR SPIRAL WAVES
                 %if (i==3334)
@@ -107,7 +130,7 @@ classdef Monodomain < handle
 
                 if mod(i,obj.exportStep)==0
                     nameCounter=nameCounter+1;
-                    exportVTK(obj.Vn,obj.pg,nameCounter);
+                    exportVTK_bido(obj.Vn,obj.un,obj.pg,nameCounter);
                 end
             end
         end
