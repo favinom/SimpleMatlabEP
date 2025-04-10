@@ -31,18 +31,18 @@ classdef Monodomain < handle
 
     end
     methods
-        function obj=Monodomain(pg,M,L,T,ionicModelType,factorize,U_rest)
+        function obj=Monodomain(pg,M,L,T,ionicModelType,factorize,U_rest,diff)
             obj.pg=pg;
 
             obj.U_rest=U_rest;
 
             obj.T=T;
             obj.dt=T(2)-T(1);
-            obj.diff=1e-3;
+            obj.diff=diff;
 
             obj.M=M;
             obj.L=L;
-            obj.Mat=M+obj.dt*1e-3*L;
+            obj.Mat=M+obj.dt*obj.diff*L;
             if factorize
                 obj.H=chol(obj.Mat);
             end
@@ -60,6 +60,9 @@ classdef Monodomain < handle
             end
             if ionicModelType==2
                 obj.ionicModel=TenTusscher(obj.V,obj.dt);
+            end
+            if ionicModelType==3
+                obj.ionicModel=Paci(obj.V,obj.dt);
             end
             obj.exportStep=1;
             
@@ -79,7 +82,7 @@ classdef Monodomain < handle
                 
                 Iion=obj.ionicModel.getCurr(obj.Vo,i);
                 if obj.IappStartTime<t && t<obj.IappStopTime
-                    Iapp2=280*obj.Iapp;
+                    Iapp2=obj.Iapp;
                 else
                     Iapp2=0*obj.Iapp;
                 end
@@ -107,7 +110,11 @@ classdef Monodomain < handle
 
                 if mod(i,obj.exportStep)==0
                     nameCounter=nameCounter+1;
-                    exportVTK(obj.Vn,[],obj.pg,nameCounter,0);
+                    if obj.ionicModelType==3
+                        exportVTK(obj.Vn*1e3,[],obj.pg,nameCounter,0);
+                    else
+                        exportVTK(obj.Vn,[],obj.pg,nameCounter,0);
+                    end
                 end
             end
         end

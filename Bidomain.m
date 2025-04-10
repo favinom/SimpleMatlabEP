@@ -40,8 +40,10 @@ classdef Bidomain < handle
 
     end
     methods
-        function obj=Bidomain(pg,M,L,T,ionicModelType,factorize,U_rest)
+        function obj=Bidomain(pg,M,L,T,ionicModelType,factorize,U_rest,Di,De)
             obj.pg=pg;
+            
+            obj.factorize=factorize;
 
             obj.U_rest=U_rest;
 
@@ -49,18 +51,18 @@ classdef Bidomain < handle
             obj.dt=T(2)-T(1);
             %obj.diff=1e-3;
 
-            obj.Di=3.15e-4;
-            obj.De=1.35e-3;
+            obj.Di=Di;
+            obj.De=De;
 
             obj.M=M;
             obj.L=L;
             obj.Li=obj.Di*obj.L;
             obj.Lie=(obj.Di+obj.De)*obj.L;
 
-            obj.Mat=M+obj.dt*L;
-            if factorize
-                obj.H=chol(obj.Mat);
-            end
+            obj.Mat=M+obj.dt*obj.Li;
+            %if factorize
+            obj.H=chol(obj.Mat);
+            %end
             obj.Mat2=obj.Lie;
             
             obj.Vn=zeros(obj.pg.nv,1);
@@ -79,9 +81,16 @@ classdef Bidomain < handle
             if ionicModelType==2
                 obj.ionicModel=TenTusscher(obj.V,obj.dt);
             end
+            if ionicModelType==3
+                obj.ionicModel=Paci(obj.V,obj.dt);
+            end
             obj.exportStep=1;
             
-            exportVTK(obj.Vn,obj.un,obj.pg,0,1);
+            if obj.ionicModelType==3
+                exportVTK(obj.Vn*1e3,obj.un,obj.pg,0,1);
+            else
+                exportVTK(obj.Vn,obj.un,obj.pg,0,1);
+            end
         end
         function run(obj)
             nameCounter=0;
@@ -98,7 +107,7 @@ classdef Bidomain < handle
                 
                 Iion=obj.ionicModel.getCurr(obj.Vo,i);
                 if obj.IappStartTime<t && t<obj.IappStopTime
-                    Iapp2=280*obj.Iapp;
+                    Iapp2=obj.Iapp;
                 else
                     Iapp2=0*obj.Iapp;
                 end
@@ -106,7 +115,8 @@ classdef Bidomain < handle
                 Itot=Iapp2-Iion;
 
                 rhs=obj.Vo+obj.dt*Itot;
-                rhs=obj.M*rhs-obj.dt*obj.Li*obj.uo;
+                rhs=obj.M*rhs;
+                rhs=rhs-obj.dt*obj.Li*obj.uo;
 
                 if obj.factorize
                     y=obj.H'\rhs;
@@ -134,7 +144,12 @@ classdef Bidomain < handle
 
                 if mod(i,obj.exportStep)==0
                     nameCounter=nameCounter+1;
-                    exportVTK(obj.Vn,obj.un,obj.pg,nameCounter,1);
+                    if obj.ionicModelType==3
+                        exportVTK(obj.Vn*1e3,obj.un,obj.pg,nameCounter,1);
+                    else
+                        exportVTK(obj.Vn,obj.un,obj.pg,nameCounter,1);
+                    end
+                    
                 end
             end
         end

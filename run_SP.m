@@ -3,12 +3,12 @@ close all
 
 %% Domini e griglia e matrici
 Xf = 1; 
-nex = 64;
+nex = 128;
 x = linspace(0, Xf, nex+1)'; 
 hx = diff(x);
 
 Yf = 1; 
-ney = 512;
+ney = 128;
 y = linspace(0, Yf, ney+1)'; 
 hy = diff(y);
 
