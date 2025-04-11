@@ -89,7 +89,7 @@ md.IappStartTime=start_stim;
 md.IappStopTime=stop_stim;
 md.Iapp=Iapp;
 
-md.exportStep=100;
+md.exportStep=50;
 
 md.run;
 

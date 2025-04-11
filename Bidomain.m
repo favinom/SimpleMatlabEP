@@ -87,7 +87,7 @@ classdef Bidomain < handle
             obj.exportStep=1;
             
             if obj.ionicModelType==3
-                exportVTK(obj.Vn*1e3,obj.un,obj.pg,0,1);
+                exportVTK(obj.Vn*1e3,obj.un*1e3,obj.pg,0,1);
             else
                 exportVTK(obj.Vn,obj.un,obj.pg,0,1);
             end
@@ -145,7 +145,7 @@ classdef Bidomain < handle
                 if mod(i,obj.exportStep)==0
                     nameCounter=nameCounter+1;
                     if obj.ionicModelType==3
-                        exportVTK(obj.Vn*1e3,obj.un,obj.pg,nameCounter,1);
+                        exportVTK(obj.Vn*1e3,obj.un*1e3,obj.pg,nameCounter,1);
                     else
                         exportVTK(obj.Vn,obj.un,obj.pg,nameCounter,1);
                     end

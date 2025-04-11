@@ -66,7 +66,11 @@ classdef Monodomain < handle
             end
             obj.exportStep=1;
             
-            exportVTK(obj.Vn,[],obj.pg,0,0);
+            if obj.ionicModelType==3
+                exportVTK(obj.Vn*1e3,[],obj.pg,0,0);
+            else
+                exportVTK(obj.Vn,[],obj.pg,0,0);
+            end
         end
         function run(obj)
             nameCounter=0;

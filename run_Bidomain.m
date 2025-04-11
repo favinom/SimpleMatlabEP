@@ -12,8 +12,8 @@ if ionicModelType==1
     I_stim=280; 
     start_stim=5;
     stop_stim=5.3;
-    Di=3.15e-4;
-    De=1.35e-3;
+    Di=3.15e-4;   % S/cm
+    De=1.35e-3;   % S/cm            
 end
 if ionicModelType==2
     U_rest = -85.23; 
@@ -22,8 +22,8 @@ if ionicModelType==2
     I_stim=280;
     start_stim=5;
     stop_stim=5.3;
-    Di=3.15e-4;
-    De=1.35e-3;
+    Di=3.15e-4;   % S/cm
+    De=1.35e-3;   % S/cm
 end
 if ionicModelType==3
     U_rest = -0.0734525804324366; 
@@ -32,8 +32,8 @@ if ionicModelType==3
     I_stim= 280; 
     start_stim=5*1e-3;
     stop_stim=5.3*1e-3;
-    Di=3.15e-4;
-    De=1.35e-3;
+    Di=3.15e-1;
+    De=1.35;
 end
 
 T=linspace(0,Tf,nt+1);
@@ -92,7 +92,7 @@ bd.IappStartTime=start_stim;
 bd.IappStopTime=stop_stim;
 bd.Iapp=Iapp;
 
-bd.exportStep=100;
+bd.exportStep=50;
 
 bd.run;
 
