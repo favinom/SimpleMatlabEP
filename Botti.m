@@ -67,11 +67,11 @@ classdef Botti < handle
         alpha_ui
         beta_ui
 
-        KQ10        = 3.0;
-        coeff_Kur   = 3.5;
-        g_KCa       = 0.0753851103617082;
-        KCa_on      = 47.0e6;
-        KCa_off     = 13.0;
+        KQ10      
+        coeff_Kur  
+        g_KCa     
+        KCa_on     
+        KCa_off    
 
 
         % initial conditions
@@ -292,7 +292,7 @@ classdef Botti < handle
     end
     methods
         function obj=Botti(V,dt)
-            obj.g_K1        = 0.06; % unpaced 
+            % obj.g_K1        = 0.06; % unpaced 
             obj.g_K1        = 0.169261259039458; % paced 
             
             % Constants
@@ -358,10 +358,11 @@ classdef Botti < handle
             obj.g_KCa       = 0.0753851103617082;
             obj.KCa_on      = 47.0e6;
             obj.KCa_off     = 13.0;
+         
                 
             % initial conditions
-            obj.CaSR0=0.115107956531682;
-            obj.Cai0=03.65880000000000e-05;
+            obj.CaSR0=0.0374480000000000;
+            obj.Cai0=3.65880000000000e-05;
             obj.g0=0;
             obj.d0=5.33930000e-06;
             obj.f10=0.925250000000000;
@@ -432,7 +433,7 @@ classdef Botti < handle
             obj.tau_f1      =@(V,Cai,f1) (20.0+1102.5.*exp(-((V.*1000.0+50.0)./15.0).^2.0)+200.0./(1.0+exp((13.0-V.*1000.0)./10.0))+280.0./(1.0+exp((30.0+V.*1000.0)./10.0))).*obj.constf1(V,Cai,f1)./1000.0;
             
             obj.f2_inf      =@(V) 0.33+0.67./(1.0+exp((V.*1000.0+31.2260)./4.0));
-            obj.tau_f2      =@(V) ((600.0.*exp(-(V.*1000.0+25.0).^2.0./170.0)+31.0./(1.0+exp((25.0-V.*1000.0)./10.0))+16.0./(1.0+exp((30.0+V.*1000.0)./10.0))).*obj.constf2./1000.0)*2.0;
+            obj.tau_f2      =@(V) ((600.0.*exp(-(V.*1000.0+25.0).^2.0./170.0)+31.0./(1.0+exp((25.0-V.*1000.0)./10.0))+1.0./(1.0+exp((30.0+V.*1000.0)./10.0))).*obj.constf2./1000.0).*2.0;
             
             obj.alpha_fCa   =@(Cai) 1.0./(1.0+(Cai./0.0006).^8.0);
             obj.beta_fCa    =@(Cai) 0.1./(1.0+exp((Cai-0.0009)./0.0001));
@@ -477,11 +478,11 @@ classdef Botti < handle
             
             obj.i_NaCa      =@(V,Nai,Cai) obj.kNaCa.*(exp(obj.gamma.*V.*obj.F./(obj.R.*obj.T)).*Nai.^3.0.*obj.Cao-exp((obj.gamma-1.0).*V.*obj.F./(obj.R.*obj.T)).*obj.Nao.^3.0.*Cai.*obj.alpha)./((obj.KmNai.^3.0+obj.Nao.^3.0).*(obj.KmCa+obj.Cao).*(1.0+obj.Ksat.*exp((obj.gamma-1.0).*V.*obj.F./(obj.R.*obj.T))));
             
-            obj.i_NaK       =@(V,Nai) 1.3*(obj.PNaK.*obj.Ko./(obj.Ko+obj.Km_K).*Nai./(Nai+obj.Km_Na)./(1.0+0.1245.*exp(-0.1.*V.*obj.F./(obj.R.*obj.T))+0.0353.*exp(-V.*obj.F./(obj.R.*obj.T))));
+            obj.i_NaK       =@(V,Nai) 1.3.*(obj.PNaK.*obj.Ko./(obj.Ko+obj.Km_K).*Nai./(Nai+obj.Km_Na)./(1.0+0.1245.*exp(-0.1.*V.*obj.F./(obj.R.*obj.T))+0.0353.*exp(-V.*obj.F./(obj.R.*obj.T))));
             
             obj.i_PCa       =@(Cai) obj.g_PCa.*Cai./(Cai+obj.KPCa);
             
-            obj.i_b_Na      =@(V,Nai) 0.1*(obj.g_b_Na.*(V-obj.E_Na(Nai)));
+            obj.i_b_Na      =@(V,Nai) 0.1.*(obj.g_b_Na.*(V-obj.E_Na(Nai)));
             
             obj.i_b_Ca      =@(V,Cai) obj.g_b_Ca.*(V-obj.E_Ca(Cai));
             

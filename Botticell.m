@@ -522,4 +522,4 @@ for i=2:nt+1
 
 end
 
-plot(T,V)
+plot(T,V*1e3)
