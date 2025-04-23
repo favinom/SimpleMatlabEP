@@ -1,6 +1,6 @@
 clear; close all; clc;
 
-mesh_sizes = [64, 128, 256, 512];  % Puoi aggiungere 512, 1024 se vuoi 
+mesh_sizes = [64, 128, 256, 512, 1024];  % Puoi aggiungere 512, 1024 se vuoi 
 Xf = 1; Yf = 1;
 
 for idx = 1:length(mesh_sizes)
@@ -15,14 +15,24 @@ for idx = 1:length(mesh_sizes)
     [X, Y] = ndgrid(x, y);
     node_id = 1:(nex+1)*(ney+1);
 
+    node_id_bc=reshape(node_id,[(nex+1) (ney+1)]);
+    node_id_bc(2:end-1,2:end-1)=0;
+    node_id_bc=unique(sort(node_id_bc(:)));
+    node_id_bc=node_id_bc(2:end);
     % Matrici
     [M, L] = assembleMatrices_old(hx, hy);
-    L = L + 0.001 * M; % regolarizzazione
+    %L = L + 0.001 * M; % regolarizzazione
+    L(node_id_bc,:)=0;
+    L(:,node_id_bc)=0;
+    L(node_id_bc,node_id_bc)=speye(length(node_id_bc));
 
     % Forzante
     f = @(x, y) sin(pi*x) .* sin(pi*y);
     F = f(X, Y);
+    F=ones(size(F));
     b = M * F(:);
+
+    b(node_id_bc)=0;
     
     % Decomposizione dominio
     id{1} = find((X < Xf/2) & (Y < Yf/2));
@@ -76,6 +86,19 @@ for idx = 1:length(mesh_sizes)
     fprintf('  Tempo SP (DD):         %.4f s (iter: %d)\n', time_dd, iter_dd);
     fprintf('  Errore relativo (DD):  %.2e\n', err_rel);
 
+
+    % figure
+    subplot(1,2,1)
+    surf(X, Y, reshape(x_full, size(X)))
+    shading interp
+    title('Soluzione completa')
+
+    subplot(1,2,2)
+    surf(X, Y, reshape(x_rec, size(X)))
+    shading interp
+    title('Soluzione SP')
+
+    pause
     % Pulizia
     clear id id_S sp;
 end

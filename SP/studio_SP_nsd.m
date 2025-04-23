@@ -40,8 +40,6 @@ for sd = 1:length(nsd_x)
     [id_S,id]=buildSubdomainIds(pg,nsd,nsd);
     plotSubid(pg,id_S,id);
 
-    
-
     % Metodo di Steklov-Poincaré
     fprintf('  [*] PCG con Steklov-Poincaré...\n');
     x0 = zeros(size(b));
@@ -74,6 +72,21 @@ for sd = 1:length(nsd_x)
     fprintf('  Tempo SP (DD):         %.4f s (iter: %d)\n', time_dd, iter_dd);
     fprintf('  Errore relativo (DD):  %.2e\n', err_rel);
 
+    % Visualizzazione confronto
+    figure
+    subplot(1,2,1)
+    surf(X, Y, reshape(x_full, size(X)))
+    shading interp
+    title('Soluzione completa')
+
+    subplot(1,2,2)
+    surf(X, Y, reshape(x_rec, size(X)))
+    shading interp
+    title('Soluzione SP')
+
+
     % Pulizia
     clear id id_S sp;
+
+    pause
 end
