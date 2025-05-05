@@ -25,13 +25,13 @@ for idx = 1:length(mesh_sizes)
     
     % Matrici
     [M, L] = assembleMatrices(pg);
-    L = L + 0.001 * M; % regolarizzazione
+    % L = L + 0.001 * M; % regolarizzazione
     
     % Forzante
     [X,Y]=pg.getCoo;
     f = @(x, y) sin(pi*x) .* sin(pi*y);
     F = f(X, Y);
-    b = M * F(:);
+    b = L * F(:);
     
     % % Soluzione globale
     % fprintf('  [*] PCG Full...\n');
@@ -81,8 +81,8 @@ for idx = 1:length(mesh_sizes)
         err_rel = norm(x_full - x_rec) / norm(x_full);
     
         % Risultati
-        h = 1/nex;
-        H = 1/nsd;
+        h = Xf/nex;
+        H = Xf/nsd;
         fprintf('  h = %.4f , \t H = %.4f \n', h, H);
         % fprintf('  Tempo PCG globale:     %.4f s (iter: %d)\n', time_full, iter_full);
         % fprintf('  Tempo SP (DD):         %.4f s (iter: %d)\n', time_dd, iter_dd);
