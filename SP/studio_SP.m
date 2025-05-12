@@ -2,7 +2,7 @@ clear; close all; clc;
 
 addpath('../.')
 
-mesh_sizes = [64, 128, 256, 512, 1024];
+mesh_sizes = 10; %[64, 128, 256];
 
 Xf = 1; Yf = 1;
 
@@ -25,7 +25,7 @@ for idx = 1:length(mesh_sizes)
     
     % Matrici
     [M, L] = assembleMatrices(pg);
-    % L = L + 0.001 * M; % regolarizzazione
+    L = 1.5*L; %+ 0.001 * M; % regolarizzazione
     
     % Forzante
     [X,Y]=pg.getCoo;
@@ -42,7 +42,7 @@ for idx = 1:length(mesh_sizes)
         disp('pcg non converge')
     end
         
-    nsd_x=[1,2,3,4,5,6,7,8,9,10];
+    nsd_x=3; %[1,2,3,4,5,6,7,8,9,10];
     
     
     for sd = 1:length(nsd_x)
@@ -50,7 +50,9 @@ for idx = 1:length(mesh_sizes)
         
         fprintf('\n--- NUMBER SUBDOMAINS %d ---\n', nsd*nsd);
         
-        [id_S,id]=buildSubdomainIds(pg,nsd,nsd);
+        [id_S,id,id_x,id_y]=buildSubdomainIds(pg,nsd,nsd);
+
+        keyboard
         % plotSubid(pg,id_S,id);
     
         % Metodo di Steklov-Poincaré

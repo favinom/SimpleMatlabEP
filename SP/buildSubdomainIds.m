@@ -1,4 +1,4 @@
-function [ids,idi]=buildSubdomainIds(pg,nex,ney)
+function [ids,idi,vertical_lines,horizontal_lines]=buildSubdomainIds(pg,nex,ney)
 
 [X,Y]=pg.getCoo;
 
@@ -48,3 +48,17 @@ ids=1:numel(X);
 for i=1:length(idi)
     ids=setdiff(ids,idi{i});
 end
+
+
+% Calcolo dei vettori dei nodi sulle interfacce verticali
+for i = 1:nex-1
+    xval = xs(i+1); % posizione della linea verticale
+    vertical_lines{i} = find(abs(X - xval) < 1e-12); % tolleranza per confronto numerico
+end
+
+% Calcolo dei vettori dei nodi sulle interfacce orizzontali
+for j = 1:ney-1
+    yval = ys(j+1); % posizione della linea orizzontale
+    horizontal_lines{j} = find(abs(Y - yval) < 1e-12); % tolleranza per confronto numerico
+end
+
