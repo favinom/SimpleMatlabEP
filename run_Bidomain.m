@@ -2,7 +2,7 @@ clear all
 close all
 
 dim=2;
-ionicModelType=4; % 1 HH % 2 TT
+ionicModelType=5; % 1 HH % 2 TT % 3 Paci % 4 Botti % 5 Amin
 factorize=0;
 
 if ionicModelType==1
@@ -38,6 +38,16 @@ end
 if ionicModelType==4
     U_rest = -0.0908810000000000; 
     Tf=1 ;
+    nt=5000;
+    I_stim= 280; 
+    start_stim=5*1e-3;
+    stop_stim=5.3*1e-3;
+    Di=3.15e-1;
+    De=1.35;
+end
+if ionicModelType==5
+    U_rest = -0.0734525804324366; 
+    Tf=1.5;
     nt=5000;
     I_stim= 280; 
     start_stim=5*1e-3;

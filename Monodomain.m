@@ -74,9 +74,12 @@ classdef Monodomain < handle
             if ionicModelType==4
                 obj.ionicModel=Botti(obj.V,obj.dt);
             end
+            if ionicModelType==5
+                obj.ionicModel=Amin(obj.V,obj.dt);
+            end
             obj.exportStep=1;
             
-            if obj.ionicModelType==3 || obj.ionicModelType==4
+            if obj.ionicModelType==3 || obj.ionicModelType==4 || obj.ionicModelType==5
                 exportVTK(obj.Vn*1e3,[],obj.pg,0,0);
             else
                 exportVTK(obj.Vn,[],obj.pg,0,0);
@@ -129,7 +132,7 @@ classdef Monodomain < handle
 
                 if mod(i,obj.exportStep)==0
                     nameCounter=nameCounter+1;
-                    if obj.ionicModelType==3 || obj.ionicModelType==4
+                    if obj.ionicModelType==3 || obj.ionicModelType==4 || obj.ionicModelType==5
                         exportVTK(obj.Vn*1e3,[],obj.pg,nameCounter,0);
                     else
                         exportVTK(obj.Vn,[],obj.pg,nameCounter,0);
@@ -142,7 +145,7 @@ classdef Monodomain < handle
             centerNode = round(obj.pg.nv / 2);
             timeVec = obj.T(1:obj.storeStep:end); % Tempo associato a Vsave
         
-            if obj.ionicModelType==3 || obj.ionicModelType==4
+            if obj.ionicModelType==3 || obj.ionicModelType==4 || obj.ionicModelType==5
                 timeVec = timeVec*1e3;
                 Vsaved = obj.Vsave*1e3;
             end
