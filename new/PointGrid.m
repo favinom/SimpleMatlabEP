@@ -104,13 +104,14 @@ classdef PointGrid < handle
 
         function bnodes = getBoundary(obj)
             % Restituisce gli indici dei nodi al bordo (per 2D)
-            if obj.dim ~= 2
-                error('getBoundary è implementato solo per 2D');
-            end
+            % if obj.dim ~= 2
+            %     error('getBoundary è implementato solo per 2D');
+            % end
             nx = obj.nlv(1);
             ny = obj.nlv(2);
-            [X, Y] = ndgrid(0:nx-1, 0:ny-1);
-            mask = (X == 0) | (Y == 0) | (Y == ny-1);
+            % [X, Y] = ndgrid(0:nx-1, 0:ny-1);
+            [X,Y,Z]=getCoo(obj);
+            mask = (X == 0) | (Y == 0) | ( X == max(X(:)) );
             bnodes = find(mask(:));
         end
 

@@ -136,6 +136,8 @@ exportVTK_MEA(pg, Mtot)
 % BOUNDARY NODES (3 edges) %
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 boundary_nodes = pg.getBoundary;
+
+plot_Boundary
     
 
 keyboard
