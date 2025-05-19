@@ -122,6 +122,7 @@ for i = 1:nk
     dist_centri = sqrt((Xc - el{i}(1)).^2 + (Yc - el{i}(2)).^2);
     [~, which_k] = min(dist_centri(:));
     Mk{i}(which_k) = 1.0;
+    fk{i} = sum(Mk{i},2);
 end
 
 Mtot = zeros(size(Mk{1}));
@@ -131,9 +132,13 @@ end
 exportVTK_MEA(pg, Mtot)
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% BOUNDARY NODES (3 edges) %
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+boundary_nodes = pg.getBoundary;
+    
 
-
-
+keyboard
 
 [X,Y,Z]=pg.getCoo;
 Iapp=zeros(pg.get_nv,1);
