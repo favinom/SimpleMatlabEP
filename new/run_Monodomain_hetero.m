@@ -2,7 +2,7 @@ clear all
 close all
 
 dim=2;
-ionicModelType=4; % 1 HH % 2 TT % 3 Paci % 4 Botti % 5 Amin
+ionicModelType=4; % 1 HH % 2 TT % 3 Paci % 4 Botti
 factorize=0;
 
 if ionicModelType==1
@@ -34,16 +34,7 @@ if ionicModelType==3
 end
 if ionicModelType==4
     U_rest = -0.0908810000000000; 
-    Tf=0.5;
-    nt=2500;
-    I_stim= 280; 
-    start_stim=5*1e-3;
-    stop_stim=5.3*1e-3;
-    diff=1e0;
-end
-if ionicModelType==5
-    U_rest = -0.0734525804324366; 
-    Tf=1.5;%/5000;%1.5;
+    Tf=1 ;
     nt=5000;
     I_stim= 280; 
     start_stim=5*1e-3;
@@ -96,7 +87,16 @@ if dim==3
 end
 
 pg=PointGrid(ne+1,h);
-[M,L]=assembleMatrices(pg);
+[Xc,Yc,Zc]=pg.getCooCenters;
+
+which=find(0.4<Xc & Xc<0.6 & 0.4<Yc);
+o=ones(size(Xc));
+
+o(which)=0.1;
+
+L=assembleMatricesH(pg,'diff',o);
+M=assembleMatricesH(pg,'mass');
+
 
 [X,Y,Z]=pg.getCoo;
 Iapp=zeros(pg.get_nv,1);
@@ -111,7 +111,7 @@ md.IappStartTime=start_stim;
 md.IappStopTime=stop_stim;
 md.Iapp=Iapp;
 
-md.exportStep=20;
+md.exportStep=10;
 
 md.run;
 

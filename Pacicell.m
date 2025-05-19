@@ -213,7 +213,7 @@ Ca_SR_bufSR =@(CaSR) 1.0/(1.0+Buf_SR*Kbuf_SR/(CaSR+Kbuf_SR)^2.0);
 
 
 
-Tf=1.5; %500;
+Tf=1; %500;
 nt=50000;
 dt=Tf/nt;
 T=linspace(0,Tf,nt+1);
@@ -425,8 +425,8 @@ for i=2:nt+1
     CaSR(i)      = CaSRold+dt*dCaSR_eval(CaSRold);
     
     
-    if (2<t && t<2.3)
-        Iapp=0*5.5e-10;%7.5e-10;
+    if (t<0.025)
+        Iapp=1.;
     else
         Iapp=0;
     end
@@ -435,6 +435,7 @@ for i=2:nt+1
 
     
     V(i)=Vold+dt*Itot;
+
 
 end
 

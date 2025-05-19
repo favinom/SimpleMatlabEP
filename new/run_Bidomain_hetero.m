@@ -2,17 +2,18 @@ clear all
 close all
 
 dim=2;
-ionicModelType=4; % 1 HH % 2 TT % 3 Paci % 4 Botti % 5 Amin
+ionicModelType=5; % 1 HH % 2 TT % 3 Paci % 4 Botti % 5 Amin
 factorize=0;
 
 if ionicModelType==1
     U_rest = -54.387;
-    Tf=30*10;
-    nt=5000*10;
+    Tf=30;
+    nt=5000;
     I_stim=280; 
     start_stim=5;
     stop_stim=5.3;
-    diff=1e-3;
+    Di=3.15e-4;   % S/cm
+    De=1.35e-3;   % S/cm            
 end
 if ionicModelType==2
     U_rest = -85.23; 
@@ -21,34 +22,38 @@ if ionicModelType==2
     I_stim=280;
     start_stim=5;
     stop_stim=5.3;
-    diff=1e-3;
+    Di=3.15e-4;   % S/cm
+    De=1.35e-3;   % S/cm
 end
 if ionicModelType==3
     U_rest = -0.0734525804324366; 
-    Tf=0.6;
+    Tf=1.0;
     nt=5000;
     I_stim= 280; 
     start_stim=5*1e-3;
     stop_stim=5.3*1e-3;
-    diff=1e0;
+    Di=3.15e-1;
+    De=1.35;
 end
 if ionicModelType==4
     U_rest = -0.0908810000000000; 
-    Tf=0.5;
-    nt=2500;
-    I_stim= 280; 
-    start_stim=5*1e-3;
-    stop_stim=5.3*1e-3;
-    diff=1e0;
-end
-if ionicModelType==5
-    U_rest = -0.0734525804324366; 
-    Tf=1.5;%/5000;%1.5;
+    Tf=1 ;
     nt=5000;
     I_stim= 280; 
     start_stim=5*1e-3;
     stop_stim=5.3*1e-3;
-    diff=1e0;
+    Di=3.15e-1;
+    De=1.35;
+end
+if ionicModelType==5
+    U_rest = -0.0734525804324366; 
+    Tf=0.1;
+    nt=5000;
+    I_stim= 280; 
+    start_stim=5*1e-3;
+    stop_stim=5.3*1e-3;
+    Di=3.15e-1;
+    De=1.35;
 end
 
 T=linspace(0,Tf,nt+1);
@@ -69,10 +74,10 @@ if dim==1
 end
 
 if dim==2
-    Xf=1;
+    Xf=0.2;
     nex=100;
     hx=Xf/100;
-    Yf=1;
+    Yf=0.2;
     ney=100;
     hy=Yf/100;
     ne=[nex ney];
@@ -96,25 +101,34 @@ if dim==3
 end
 
 pg=PointGrid(ne+1,h);
-[M,L]=assembleMatrices(pg);
+[Xc,Yc,Zc]=pg.getCooCenters;
+
+which=find(0.4<Xc & Xc<0.6 & 0.4<Yc);
+o=ones(size(Xc));
+
+o(which)=0.1;
+
+L=assembleMatricesH(pg,'diff',o);
+M=assembleMatricesH(pg,'mass');
+
 
 [X,Y,Z]=pg.getCoo;
 Iapp=zeros(pg.get_nv,1);
-which=find(X<0.2 & Y<0.2 & Z<0.2);
+which=find(X<0.02 & Y<0.02 & Z<0.02);
 Iapp(which)=I_stim;
 
-md=Monodomain(pg,M,L,T,ionicModelType,factorize,U_rest,diff,VstoreStep);
+bd=Bidomain(pg,M,L,T,ionicModelType,factorize,U_rest,Di,De,VstoreStep);
 
-% md.V(:,1)=U_rest;
+% bd.V(:,1)=U_rest;
 
-md.IappStartTime=start_stim;
-md.IappStopTime=stop_stim;
-md.Iapp=Iapp;
+bd.IappStartTime=start_stim;
+bd.IappStopTime=stop_stim;
+bd.Iapp=Iapp;
 
-md.exportStep=20;
+bd.exportStep=50;
 
-md.run;
+bd.run;
 
-md.plotAndAnalyze(); 
+bd.plotAndAnalyze(); 
 
 return

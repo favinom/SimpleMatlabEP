@@ -138,14 +138,21 @@ classdef Bidomain < handle
                     y=obj.H'\rhs;
                     obj.Vn=obj.H\y;
                 else
-                    [obj.Vn,~,~]=pcg(obj.Mat,rhs,1e-7,1000,obj.H,obj.H',obj.Vo);
+                    %[obj.Vn,~,~]=pcg(obj.Mat,rhs,1e-7,1000,obj.H,obj.H',obj.Vo);
+                    tic
+                    %obj.Vn=pcg(obj.Mat,rhs,1e-7,1000,obj.H,obj.H',obj.Vo);
+                    obj.Vn=pcg(obj.Mat,rhs,1e-7,1000,[],[],obj.Vo);
+                    toc
                 end
 
                 clear rhs
 
                 rhs=-obj.Li*obj.Vn;
-                [obj.un,~,~]=pcg(obj.Mat2,rhs,1e-7,1000,[],[],obj.uo);
-
+                %[obj.un,~,~]=pcg(obj.Mat2,rhs,1e-7,1000,[],[],obj.uo);
+                tic
+                obj.un=pcg(obj.Mat2,rhs,1e-7,1000,[],[],obj.uo);
+                toc
+                disp('fine')
                 clear rhs
 
 

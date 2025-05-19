@@ -225,7 +225,6 @@ classdef Bidomain < handle
                 end
 
 
-
                 % PROTOCOL FOR SPIRAL WAVES
                 %if (i==3334)
                 %    [X,Y,Z]=obj.pg.getCoo;
@@ -361,16 +360,6 @@ classdef Bidomain < handle
                 fprintf(fid, 'LOOKUP_TABLE default\n');
                 fprintf(fid, '%f\n', repolarizationTimes{k}(:));
             end
-            
-            % Ativation Times
-            % fprintf(fid, 'SCALARS AT float 1\n');
-            % fprintf(fid, 'LOOKUP_TABLE default\n');
-            % fprintf(fid, '%f\n', activationTimes(:));
-            % 
-            % % Repolarization Times
-            % fprintf(fid, 'SCALARS RT float 1\n');
-            % fprintf(fid, 'LOOKUP_TABLE default\n');
-            % fprintf(fid, '%f\n', repolarizationTimes(:));
 
             % Labels
             fprintf(fid, 'SCALARS Labels float 1\n');
