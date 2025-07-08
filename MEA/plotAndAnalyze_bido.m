@@ -1,9 +1,8 @@
-function plotAndAnalyze(obj,el)
+function plotAndAnalyze_bido(obj,el)
     [X,Y,~]=obj.pg.getCoo;
     number_points = 9;
     P = cell(1, number_points);
     
-    % center = [0.1; 0.1];
     d = obj.pg.nlv(1) * obj.pg.h(1) / 4;
     center = [obj.pg.nlv(1) * obj.pg.h(1) /2; obj.pg.nlv(1) * obj.pg.h(1) /2];
     offsets = [-1 0 1] * d;
@@ -23,38 +22,20 @@ function plotAndAnalyze(obj,el)
     end
 
     timeVec = obj.T(1:obj.storeStep:end); % Tempo associato a Vsave
-    Usaved = cell(size(obj.Usave));
     
     if obj.ionicModelType==3 || obj.ionicModelType==4 || obj.ionicModelType==5
         timeVec = timeVec*1e3;
         Vsaved = obj.Vsave*1e3;
         usaved = obj.usave*1e3;
-        for k = 1:length(obj.fk)
-            %Usaved{k} = obj.Usave{k}*1e3;
-            Usaved{k} = obj.FPsave{k}*1e3;
-        end
     end
 
-    %[OS, OSpos] = findpeaks(Vsaved(selectedNodes{1}), 'MinPeakHeight', 0);
-    %[~, locs] = findpeaks(Vsaved(selectedNodes{5},:), timeVec, 'MinPeakHeight', threshold, 'MinPeakDistance', 0.5);
-    %n_beats = length(locs);
-
-    
     % Inserisci manualmente il numero di battiti
     n_beats = 2; %input('Inserisci il numero di battiti: ');
-
-
-    % % Trova i picchi (fase di depolarizzazione)
-    % [~, locs] = findpeaks(V, t, 'MinPeakHeight', threshold, 'MinPeakDistance', d);
-    % 
-    % % Conta i battiti
-    % n_beats = length(locs);
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%%%%%%%%%%%%%%%%%%%%%% 
 % PLOT IN MATLAB AND CSV SINGLE NODE
 %%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%%%%%%%%%%%%%%%%%%%%%% 
-    plot_in_matlab_0d(obj,timeVec,Vsaved,usaved,Usaved,selectedNodes);
+    plot_in_matlab_0d(obj,timeVec,Vsaved,usaved,selectedNodes);
     store_csv = 10;
 
     time_csv = timeVec(1:store_csv:end);
@@ -76,14 +57,9 @@ function plotAndAnalyze(obj,el)
         T.(varName) = u_csv(:);
     end
 
-    for k = 1:length(obj.fk)
-        U_csv = Usaved{k}(1:store_csv:end);
-        varName = sprintf('FP%d_mV', k);
-        T.(varName) = U_csv(:);
-    end
-    
+   
     % Scrive la tabella in un file CSV
-    filename = './outputs/mea_traces.csv';
+    filename = './confronto/bido_traces.csv';
     writetable(T, filename);
     
     disp(['File salvato: ', filename]);
@@ -128,43 +104,47 @@ function plotAndAnalyze(obj,el)
         clear at rt
     end
 
-    E1 = el{1};
-    [X,Y,~]=obj.pg.getCoo;
-    dist_grid_1 = sqrt((X - E1(1)).^2 + (Y - E1(2)).^2);
-    [~, which_1] = min(dist_grid_1(:));
-    acti_e1 = activationTimes{end}(which_1);
-    Latency = activationTimes{end} - acti_e1;
+    %E1 = el{1};
+    %[X,Y,~]=obj.pg.getCoo;
+    %dist_grid_1 = sqrt((X - E1(1)).^2 + (Y - E1(2)).^2);
+    %[~, which_1] = min(dist_grid_1(:));
+    %acti_e1 = activationTimes{end}(which_1);
+    %Latency = activationTimes{end} - acti_e1;
 
-    plot_in_matlab_AT(obj, activationTimes{end}, repolarizationTimes{end}, Latency);
-    
+    for beat = 1:n_beats
+        plot_in_matlab_AT(obj, activationTimes{beat}, repolarizationTimes{beat});
+    end
+    %plot_in_matlab_AT(obj, activationTimes{end}, repolarizationTimes{end}, Latency);
     
     nv = obj.pg.nlv;
     h = obj.pg.h;
 
     export_vtk_AT_RT(activationTimes,repolarizationTimes,nv,h);
+    %export_vtk_AT_RT(activationTimes{end},repolarizationTimes{end},Latency,nv,h);
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% 
 % Conduction Velocity Maps
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
+for beat = 1:n_beats
     % Metodo 1: Gradiente della mappa di attivazione
-    activationMap = reshape(activationTimes{end}, nv); % reshape in 2D/3D
-    activationTimes_s = activationTimes{end}*1e-3;
+    activationMap = reshape(activationTimes{beat}, nv); % reshape in 2D/3D
+    activationTimes_s = activationTimes{beat}*1e-3;
     activationMap_s = activationMap *1e-3;
     
     switch nnz(nv > 1)
         case 1  % 1D
             dTx = gradient(activationMap_s, h(1));
-            speedMap1 = 1 ./ abs(dTx);
+            speedMap{beat} = 1 ./ abs(dTx);
             %speedMap1(speedMap1 > 5) = NaN;
         case 2  % 2D
             [dTx, dTy] = gradient(activationMap_s, h(1), h(2)); % in cm/s
-            speedMap1 = 1 ./ sqrt(dTx.^2 + dTy.^2);
+            speedMap{beat} = 1 ./ sqrt(dTx.^2 + dTy.^2);
             %speedMap1(speedMap1 > 5) = NaN;
         case 3  % 3D
             [dTx, dTy, dTz] = gradient(activationMap_s, h(1), h(2), h(3));
-            speedMap1 = 1 ./ sqrt(dTx.^2 + dTy.^2 + dTz.^2);
+            speedMap{beat} = 1 ./ sqrt(dTx.^2 + dTy.^2 + dTz.^2);
     end
     
 
@@ -189,41 +169,14 @@ function plotAndAnalyze(obj,el)
     dt = activationTimes_s(P2) - activationTimes_s(P1);
     cv_average2 = ds / dt;
     disp(['Average velocity considering V su due punti = ' num2str(cv_average2)])
-    
-    % 
-    % 
-    % % Metodo 3: Interpolazione a partire dalle Ue e ue
-    % nk = length(Usaved);
-    % activationTimes_el = zeros(nk, 1);
-    % for k = 1:nk
-    %     [~, idx_max] = max(Usaved{k});
-    %     activationTimes_el(k) = timeVec(idx_max)*1e-3;  % in secondi
-    % end
-    % 
-    % v_el = zeros(nk, 1);
-    % for k = 1:nk
-    %     if k == 1
-    %         v_el(k) = NaN;  % nessuna velocità relativa a sé stesso
-    %     else
-    %         dx = el{k}(1) - el{1}(1);
-    %         dy = el{k}(2) - el{1}(2);
-    %         dist = sqrt(dx^2 + dy^2);  % cm
-    %         dt = activationTimes_el(k) - activationTimes_el(1);  % s
-    %         if dt > 0
-    %             v_el(k) = dist / dt;  % cm/s
-    %         else
-    %             v_el(k) = NaN;  % evitiamo valori negativi o infiniti
-    %         end
-    %     end
-    % end
-    % 
-    % disp(['Average velocity considering V = ' num2str(v_el(end))])
-    
-    
+   
 
-    plot_in_matlab_cv(obj, speedMap1{beat})
+    plot_in_matlab_cv(obj, speedMap{beat})
 
-    export_vtk_CV(speedMap1, nv, h);
+end
+
+
+    export_vtk_CV(speedMap, nv, h);
 
 end
 
@@ -268,46 +221,9 @@ function [t_act, t_repo, timeVec_new, Vtrace_new] = computeActiRepo(timeVec_old,
 end
 
 
-% 
-% 
-% 
-% 
-% function neighbors = getNeighbors(idx, nv)
-%     % getNeighbors: restituisce gli indici dei nodi adiacenti in una griglia regolare
-%     % idx: indice del nodo centrale (lineare)
-%     % nv: dimensioni della griglia [nx, ny, nz]
-% 
-%     % Calcola le coordinate (i,j,k) del nodo
-%     [I, J, K] = ind2sub(nv, idx);
-% 
-%     neighbors = [];
-% 
-%     directions = [ ...
-%         -1,  0,  0;  % sinistra
-%          1,  0,  0;  % destra
-%          0, -1,  0;  % giù
-%          0,  1,  0;  % su
-%          0,  0, -1;  % dietro
-%          0,  0,  1]; % davanti
-% 
-%     for d = 1:size(directions,1)
-%         i2 = I + directions(d,1);
-%         j2 = J + directions(d,2);
-%         k2 = K + directions(d,3);
-% 
-%         if i2 >= 1 && i2 <= nv(1) && ...
-%            j2 >= 1 && j2 <= nv(2) && ...
-%            k2 >= 1 && k2 <= nv(3)
-%             idx2 = sub2ind(nv, i2, j2, k2);
-%             neighbors(end+1) = idx2; %#ok<AGROW>
-%         end
-%     end
-% end
-% 
 
 
-
-function plot_in_matlab_0d(obj,timeVec,Vsaved,usaved,Usaved,selectedNodes)
+function plot_in_matlab_0d(obj,timeVec,Vsaved,usaved,selectedNodes)
   
     figure;
     hold on;
@@ -329,27 +245,17 @@ function plot_in_matlab_0d(obj,timeVec,Vsaved,usaved,Usaved,selectedNodes)
     title('Extracellular Potential at Selected Nodes');
     hold off;
 
-    figure;
-    for k = 1:length(obj.fk)
-        plot(timeVec, Usaved{k}, 'LineWidth', 2);
-        hold on
-    end
-    xlabel('Time [ms]');
-    ylabel('U [mV]');
-    title('Field Potential of electrodes')
-
 end
 
 
 
-function plot_in_matlab_AT(obj, activationTimes, repolarizationTimes, Latency)
+function plot_in_matlab_AT(obj, activationTimes, repolarizationTimes)
     % Plot activation and repolarization maps (if 2D or 3D)
     [X,Y,Z] = obj.pg.getCoo;
 
     sz = size(X);
     AtMap = reshape(activationTimes, sz);
     RtMap = reshape(repolarizationTimes, sz);
-    LatencyMap = reshape(Latency, sz);
     
     figure;
     surf(X, Y, Z, AtMap); %,'EdgeColor','none');
@@ -365,21 +271,55 @@ function plot_in_matlab_AT(obj, activationTimes, repolarizationTimes, Latency)
     xlabel('x'); ylabel('y'); zlabel('z');
     view(2)
 
-    figure;
-    surf(X, Y, Z, LatencyMap); %,'EdgeColor','none');
-    colorbar;
-    title('Latency Map');
-    xlabel('x'); ylabel('y'); zlabel('z');
-    view(2)
 
     %figure
     %contour(AtMap,100)
 end
 
 
+% function export_vtk_AT_RT(activationTimes,repolarizationTimes,nv,h)
+% 
+    % fid = fopen('./confronto/AT_RT.vtk', 'w');
+    % fprintf(fid, '# vtk DataFile Version 3.0\n');
+    % fprintf(fid, 'Example structured points dataset\n');
+    % fprintf(fid, 'ASCII\n\n');
+    % fprintf(fid, 'DATASET STRUCTURED_POINTS\n');
+% 
+    % % Adjust for 1D or 2D geometries
+    % if nv(2) ~= 1 && nv(3) == 1
+        % nv(3) = 2;
+        % activationTimes = repmat(activationTimes, 1, 2);
+        % repolarizationTimes = repmat(repolarizationTimes, 1, 2);
+    % elseif nv(2) == 1 && nv(3) == 1
+        % nv(2:3) = 2;
+        % activationTimes = repmat(activationTimes, 1, 4);
+        % repolarizationTimes = repmat(repolarizationTimes, 1, 4);
+    % end
+% 
+    % fprintf(fid, 'DIMENSIONS %d %d %d\n', nv(1), nv(2), nv(3));
+    % fprintf(fid, 'ORIGIN 0 0 0\n');
+    % fprintf(fid, 'SPACING %f %f %f\n\n', h(1), h(2), h(3));
+% 
+    % npoints = prod(nv);
+    % fprintf(fid, 'POINT_DATA %d\n', npoints);
+% 
+    % % Ativation Times
+    % fprintf(fid, 'SCALARS AT float 1\n');
+    % fprintf(fid, 'LOOKUP_TABLE default\n');
+    % fprintf(fid, '%f\n', activationTimes(:));
+% 
+    % % Repolarization Times
+    % fprintf(fid, 'SCALARS RT float 1\n');
+    % fprintf(fid, 'LOOKUP_TABLE default\n');
+    % fprintf(fid, '%f\n', repolarizationTimes(:));
+% 
+% 
+% end
+
+
 function export_vtk_AT_RT(activationTimes, repolarizationTimes, nv, h)
 
-    fid = fopen('./outputs/mea_AT_RT.vtk', 'w');
+    fid = fopen('./confronto/bido_AT_RT.vtk', 'w');
     fprintf(fid, '# vtk DataFile Version 3.0\n');
     fprintf(fid, 'Example structured points dataset\n');
     fprintf(fid, 'ASCII\n\n');
@@ -431,12 +371,11 @@ function export_vtk_AT_RT(activationTimes, repolarizationTimes, nv, h)
 end
 
 
-
-function plot_in_matlab_cv(obj, speedMap1)
+function plot_in_matlab_cv(obj, speedMap)
     [X, Y, Z] = obj.pg.getCoo;
     sz = size(X);  % dimensione mesh
 
-    CVmap1 = reshape(speedMap1, sz);
+    CVmap1 = reshape(speedMap, sz);
 
     % Plot metodo 1
     figure;
@@ -445,20 +384,37 @@ function plot_in_matlab_cv(obj, speedMap1)
     colorbar; view(2); axis equal tight;
     clim([10 25]); 
 
-    
-    % Plot della mappa interpolata
-    % figure;
-    % imagesc(linspace(min(X(:)), max(X(:)), 200), ...
-    %         linspace(min(Y(:)), max(Y(:)), 200), Vinterp);
-    % set(gca, 'YDir', 'normal'); axis equal tight;
-    % colorbar;
-    % title('Mappa interpolata della velocità di conduzione');
-    % xlabel('x [cm]');
-    % ylabel('y [cm]');
-
 end
 
 
+
+% function export_vtk_CV(speedMap, nv, h)
+%     % Esporta le conduction velocity map e la mappa interpolata Vinterp
+% 
+%     if nv(2) ~= 1 && nv(3) == 1
+%         nv(3) = 2;
+%         speedMap = repmat(speedMap, 1, 2);
+%     elseif nv(2) == 1 && nv(3) == 1
+%         nv(2:3) = 2;
+%         speedMap = repmat(speedMap, 1, 4);
+%     end
+% 
+%     fid = fopen('./confronto/CV_maps.vtk', 'w');
+%     fprintf(fid, '# vtk DataFile Version 3.0\n');
+%     fprintf(fid, 'Conduction Velocity Maps\n');
+%     fprintf(fid, 'ASCII\n\n');
+%     fprintf(fid, 'DATASET STRUCTURED_POINTS\n');
+%     fprintf(fid, 'DIMENSIONS %d %d %d\n', nv(1), nv(2), nv(3));
+%     fprintf(fid, 'ORIGIN 0 0 0\n');
+%     fprintf(fid, 'SPACING %f %f %f\n\n', h(1), h(2), h(3));
+%     fprintf(fid, 'POINT_DATA %d\n', prod(nv));
+% 
+%     fprintf(fid, 'SCALARS CV1 float 1\n');
+%     fprintf(fid, 'LOOKUP_TABLE default\n');
+%     fprintf(fid, '%f\n', speedMap(:));
+% 
+%     fclose(fid);
+% end
 
 function export_vtk_CV(speedMaps, nv, h)
     % Esporta più conduction velocity map in un file VTK (una per campo)
@@ -482,7 +438,7 @@ function export_vtk_CV(speedMaps, nv, h)
     end
 
     % Scrittura file
-    fid = fopen('./outputs/mea_CV_maps.vtk', 'w');
+    fid = fopen('./confronto/bido_CV_maps.vtk', 'w');
     fprintf(fid, '# vtk DataFile Version 3.0\n');
     fprintf(fid, 'Conduction Velocity Maps\n');
     fprintf(fid, 'ASCII\n\n');

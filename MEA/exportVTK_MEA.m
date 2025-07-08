@@ -4,7 +4,7 @@ nv = pg.nlv;
 h = pg.h;
 
 % Open VTK file
-fid = fopen(['./outputs/electrodes.vtk'], 'w');
+fid = fopen('./outputs/electrodes.vtk', 'w');
 fprintf(fid, '# vtk DataFile Version 3.0\n');
 fprintf(fid, 'Example structured points dataset\n');
 fprintf(fid, 'ASCII\n\n');

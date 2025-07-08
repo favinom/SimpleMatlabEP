@@ -7,7 +7,7 @@ h = pg.h;
 istr = sprintf('%04d', i);
 
 % Open VTK file
-fid = fopen(['sol_', istr, '.vtk'], 'w');
+fid = fopen(['./outputs/sol_', istr, '.vtk'], 'w');
 fprintf(fid, '# vtk DataFile Version 3.0\n');
 fprintf(fid, 'Example structured points dataset\n');
 fprintf(fid, 'ASCII\n\n');

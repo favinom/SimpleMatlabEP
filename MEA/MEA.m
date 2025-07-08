@@ -122,12 +122,6 @@ classdef MEA  < handle
             obj.saveCounter = 1;
 
             obj.ionicModelType=ionicModelType;
-            if ionicModelType==1
-                obj.ionicModel=HodgkinHuxley(obj.Vn,obj.dt);
-            end
-            if ionicModelType==2
-                obj.ionicModel=TenTusscher(obj.V,obj.dt);
-            end
             if ionicModelType==3
                 obj.ionicModel=Paci(obj.V,obj.dt);
             end
@@ -140,9 +134,9 @@ classdef MEA  < handle
             %obj.exportStep=1;
             
             if obj.ionicModelType==3 || obj.ionicModelType==4 || obj.ionicModelType==5
-                exportVTK(obj.Vn*1e3,obj.un*1e3,obj.pg,0,1);
+                exportVTK(obj.Vn*1e3,obj.un*1e3,obj.pg,0,0);
             else
-                exportVTK(obj.Vn,obj.un,obj.pg,0,1);
+                exportVTK(obj.Vn,obj.un,obj.pg,0,0);
             end
         end
         function run(obj)
@@ -173,14 +167,9 @@ classdef MEA  < handle
                 rhs=obj.M*rhs;
                 rhs=rhs-obj.dt*obj.Li*obj.uo;
 
-                %if obj.factorize
-                %    y=obj.H'\rhs;
-                %    obj.Vn=obj.H\y;
-                %else
-                [obj.Vn,~,~]=pcg(obj.Mat,rhs,1e-7,1000,obj.H,obj.H',obj.Vo);
-                %obj.Vn=pcg(obj.Mat,rhs,1e-7,1000,obj.H,obj.H',obj.Vo);
-                %obj.Vn=pcg(obj.Mat,rhs,1e-7,1000,[],[],obj.Vo);
-                %end
+                %[obj.Vn,~,~]=pcg(obj.Mat,rhs,1e-7,1000,obj.H',obj.H,obj.Vo);
+                temp1 = obj.H' \ rhs;              
+                obj.Vn = obj.H \ temp1; 
 
                 rhs_temp = zeros(obj.pg.nv,1);
                 for k = 1:length(obj.fk)
@@ -191,10 +180,10 @@ classdef MEA  < handle
 
                 rhs=-obj.Li*obj.Vn + rhs_temp;
                 rhs(obj.boundary_nodes)=0;
-                %[obj.un,~,~]=pcg(obj.Mat2,rhs,1e-7,1000,[],[],obj.uo);
-                % obj.un=pcg(obj.Mat2,rhs,1e-7,1000,[],[],obj.uo);
-                %=pcg(obj.Mat2,rhs,1e-7,1000,obj.H2,obj.H2',obj.uo);
-                [obj.un,~,~]=pcg(obj.Mat2,rhs,1e-7,1000,obj.H2,obj.H2',obj.uo);
+                %[obj.un,~,~]=pcg(obj.Mat2,rhs,1e-7,1000,obj.H2',obj.H2,obj.uo);        
+                temp2 = obj.H2' \ rhs;        
+                obj.un = obj.H2 \ temp2; 
+                %disp(['t=', num2str(t),'Vmax=',num2str(max(obj.un))])
                 clear rhs rhs_temp
 
                 for k = 1:length(obj.fk)
@@ -226,13 +215,8 @@ classdef MEA  < handle
 
                 if mod(i,obj.exportStep)==0
                     nameCounter=nameCounter+1;
-                    if obj.ionicModelType==3 || obj.ionicModelType==4 || obj.ionicModelType==5
-                        exportVTK(obj.Vn*1e3,obj.un*1e3,obj.pg,nameCounter,1);
-                    else
-                        exportVTK(obj.Vn,obj.un,obj.pg,nameCounter,1);
-                    end
-                    
-                end
+                    exportVTK(obj.Vn*1e3,obj.un*1e3,obj.pg,nameCounter,0);
+               end
             end
         end
     end

@@ -138,21 +138,16 @@ classdef Bidomain < handle
                     y=obj.H'\rhs;
                     obj.Vn=obj.H\y;
                 else
-                    %[obj.Vn,~,~]=pcg(obj.Mat,rhs,1e-7,1000,obj.H,obj.H',obj.Vo);
-                    tic
+                    [obj.Vn,~,~]=pcg(obj.Mat,rhs,1e-7,1000,obj.H,obj.H',obj.Vo);
                     %obj.Vn=pcg(obj.Mat,rhs,1e-7,1000,obj.H,obj.H',obj.Vo);
-                    obj.Vn=pcg(obj.Mat,rhs,1e-7,1000,[],[],obj.Vo);
-                    toc
+                    %obj.Vn=pcg(obj.Mat,rhs,1e-7,1000,[],[],obj.Vo);
                 end
 
                 clear rhs
 
                 rhs=-obj.Li*obj.Vn;
-                %[obj.un,~,~]=pcg(obj.Mat2,rhs,1e-7,1000,[],[],obj.uo);
-                tic
-                obj.un=pcg(obj.Mat2,rhs,1e-7,1000,[],[],obj.uo);
-                toc
-                disp('fine')
+                [obj.un,~,~]=pcg(obj.Mat2,rhs,1e-7,1000,[],[],obj.uo);
+                %obj.un=pcg(obj.Mat2,rhs,1e-7,1000,[],[],obj.uo);
                 clear rhs
 
 
@@ -216,6 +211,8 @@ classdef Bidomain < handle
                 activationTimes(j) = t_act;
                 repolarizationTimes(j) = t_repo;
             end
+
+            activationTimes_s = activationTimes * 1e-3;
         
             nv = obj.pg.nlv;
             h = obj.pg.h;
@@ -274,6 +271,21 @@ classdef Bidomain < handle
             % colorbar;
             % title('Repolarization Time Map');
             % xlabel('x'); ylabel('y'); zlabel('z');
+
+            % Metodo 3: Average conduction velocity
+            E1 = [0.3 0.3];
+            E2 = [0.8 0.8];
+            [X,Y,Z]=obj.pg.getCoo;
+            dist_grid_1 = sqrt((X - E1(1)).^2 + (Y - E1(2)).^2);
+            dist_grid_2 = sqrt((X - E2(1)).^2 + (Y - E2(2)).^2);
+            [~, which_1] = min(dist_grid_1(:));
+            [~, which_2] = min(dist_grid_2(:));
+            ds = sqrt((E1(1) - E2(1)).^2 + (E1(2) - E2(2)).^2);
+            dt = activationTimes_s(which_2) - activationTimes_s(which_1);
+            cv_average = ds / dt;
+            disp(['Average velocity considering V = ' num2str(cv_average)])
+
+
         end
 
     end

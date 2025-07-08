@@ -22,8 +22,8 @@ if ionicModelType==2
     I_stim=280;
     start_stim=5;
     stop_stim=5.3;
-    Di=3.15e-4;   % S/cm
-    De=1.35e-3;   % S/cm
+    Di=0.4e-3; %3.15e-4;   % S/cm
+    De=10e-4; %1.35e-3;   % S/cm
 end
 if ionicModelType==3
     U_rest = -0.0734525804324366; 
@@ -74,10 +74,10 @@ if dim==1
 end
 
 if dim==2
-    Xf=1;
+    Xf=0.1;
     nex=100;
     hx=Xf/100;
-    Yf=1;
+    Yf=0.1;
     ney=100;
     hy=Yf/100;
     ne=[nex ney];
@@ -105,7 +105,7 @@ pg=PointGrid(ne+1,h);
 
 [X,Y,Z]=pg.getCoo;
 Iapp=zeros(pg.get_nv,1);
-which=find(X<0.2 & Y<0.2 & Z<0.2);
+which=find(X<0.02 & Y<0.02 & Z<0.02);
 Iapp(which)=I_stim;
 
 bd=Bidomain(pg,M,L,T,ionicModelType,factorize,U_rest,Di,De,VstoreStep);

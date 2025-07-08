@@ -4,7 +4,7 @@ close all
 addpath('../.')
 
 dim=2;
-ionicModelType=3; % 3 Paci % 4 Botti % 5 Amin
+ionicModelType=3; % 3 Paci % 4 Botti
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%%%%%%%%%%%%%%%%%%%%%% 
 % SET IONIC MODELS, TIME STEP AND DIFFUSION PARAMETERS %
@@ -13,7 +13,7 @@ ionicModelType=3; % 3 Paci % 4 Botti % 5 Amin
 if ionicModelType==3
     U_rest = -0.0734525804324366; 
     Tf=2.5;
-    dt=1.0000e-04;
+    dt=2.0000e-04;
     nt=Tf/dt;
     I_stim= 280; 
     start_stim=5*1e-3;
@@ -27,23 +27,7 @@ if ionicModelType==4
     start_stim=5*1e-3;
     stop_stim=5.3*1e-3;
 end
-if ionicModelType==5
-    U_rest = -0.0734525804324366; 
-    Tf=0.3;
-    nt=1000;
-    I_stim= 280; 
-    start_stim=5*1e-3;
-    stop_stim=5.3*1e-3;
-end
 
-T=linspace(0,Tf,nt+1);
-
-%Di=3.15e-1; % mS/cm
-%De=1.35; % mS/cm
-%Di=1.3514;
-%De=0.31525;p
-%Di = 0.01;
-%De = 0.1;
 %Di_test = [0.01, 0.05, 0.31525];
 %De_test = [0.1, 0.5, 1.3514];
 
@@ -51,11 +35,10 @@ T=linspace(0,Tf,nt+1);
 %Di = 0.4;
 %De = 10;
 %%% PAVA
-% Di = 3.15e-1;
-% De = 1.35;
+Di = 3.15e-1; % mS/cm
+De = 1.35;    % mS/cm
 
-Di = 3.15e-1 / 2;
-De = 1.35 / 2;
+T=linspace(0,Tf,nt+1);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%%%%%%%%%%%%%%%%%%%%%% %%%%%%%%%%%%%%%%%%%%%%%%%% 
 % SET DIMENSIONS AND GEOMETRY %
@@ -118,7 +101,7 @@ M=assembleMatricesH(pg,'mass');
 %%%%%%%%%%%%%%%%%%%%%%%%%% 
 % ELECTRODES %
 %%%%%%%%%%%%%%%%%%%%%%%%%%
-nk = 9;
+nk = 64;
 el = cell(1, nk);
 
 % center = [0.1; 0.1];
@@ -130,7 +113,7 @@ elseif nk==9
     center = [Xf/2; Yf/2];
     offsets = [-1 0 1] * d;
 elseif nk == 64
-    center = [Xf/2-d/2; Xf/2-d/2];
+    center = [Xf/2-d/2; Yf/2-d/2];
     offsets = [-3 -2 -1 0 1 2 3 4] * d;
 end
 
@@ -178,7 +161,25 @@ Iapp(which)=I_stim;
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%  
-% RUN SIMULATION
+% RUN SIMULATION BIDO
+%%%%%%%%%%%%%%%%%%%%%%%%%%  
+%factorize=0;
+%bd=Bidomain(pg,M,L,T,ionicModelType,factorize,U_rest,Di,De,VstoreStep);
+%
+%bd.IappStartTime=start_stim;
+%bd.IappStopTime=stop_stim;
+%bd.Iapp=Iapp;
+%
+%bd.exportStep=50;
+%
+%tic
+%bd.run;
+%toc
+%
+%plotAndAnalyze_bido(bd,el); 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%  
+% RUN SIMULATION BIDO
 %%%%%%%%%%%%%%%%%%%%%%%%%%  
 
 mea=MEA(pg,M,L,T,ionicModelType,U_rest,Di,De,VstoreStep,fk,boundary_nodes);
@@ -187,10 +188,12 @@ mea.IappStartTime=start_stim;
 mea.IappStopTime=stop_stim;
 mea.Iapp=Iapp;
 
-mea.exportStep=20;
+mea.exportStep=50;
 
+tic
 mea.run;
+toc
 
-plotAndAnalyze(mea,el); 
+plotAndAnalyze_mea(mea,el); 
 
 return
